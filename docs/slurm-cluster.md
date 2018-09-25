@@ -79,6 +79,27 @@ This is required for slurm to function properly! Simply execute the following. W
 
 ## General Information
 
+### ERDA
+You can use sshfs to mount an ERDA directory. Note that you need to mount it on the machines that the job is submitted to. A simple approach is to make a script that mounts/unmounts the ERDA directory and call it in the slurm batch script. You can use an ssh key to login to ERDA.
+
+    # file: mount_erda.sh
+    #!/bin/bash
+    sshfs -o IdentityFile=<path-to-ssh-key> <user>@io.erda.dk:<directory> <mount-point>
+
+    # file: unmount_erda.sh
+    #!/bin/bash
+    fusermount -u <mount-point>
+
+    # file: <your-slurm-batch-script>
+    #!/bin/bash	
+    # ...
+    # ... Slurm parameters
+    # ...
+    ./mount_erda.sh
+    <path-to-your-script>
+    ./unmount_erda.sh
+
+
 ### Files
 
 Using the .ssh/config comes in handy if you want to copy your files via scp
