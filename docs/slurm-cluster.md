@@ -27,7 +27,9 @@ Table of Contents
 * [Slurm cluster](#slurm-cluster)
   * [Basic Access and First Time Setup](#basic-access-and-first-time-setup)
   * [General Information](#general-information)
+    * [ERDA](#ERDA)
     * [Files](#files)
+    * [Using a more mordern compiler](#using-a-more-mordern-compiler)
     * [Old Home directories on GPU](#old-home-directories-on-gpu)
   * [Using Slurm](#using-slurm)
     * [Examples for BatchScripts](#examples-for-batchscripts)
@@ -101,7 +103,6 @@ You can use sshfs to mount an ERDA directory. Note that you need to mount it on 
 
 
 ### Files
-
 Using the .ssh/config comes in handy if you want to copy your files via scp
 
     scp -r my_file1 my_file2 my_folder/ cluster:~/Dir
@@ -109,6 +110,13 @@ Using the .ssh/config comes in handy if you want to copy your files via scp
 This will copy my_file1 my_file2 and my_folder/ into the path /home/<kuid>/Dir/. All files in your home directory are available to all compute nodes and the gpu machines. You can also copy back simply by
 
     scp -r cluster:~/Dir ./
+
+### Using a more mordern compiler
+Our operating system is RHEL 7, which by default comes with some old packages. For some packages it is possible to instead use a newer version, which is done via the scl command line tool. For example, to enable a modern set of development tools, including the compiler, run
+
+    source scl_source enable devtoolset-7
+
+This will change the default compiler in your current session to the newer gcc 7.3. If you also want this as a permanent change in your sessions, add this command to your .bash_profile. 
 
 ### Old Home directories on GPU
 If you have an older user account, you might miss some of your data. This data is located at
