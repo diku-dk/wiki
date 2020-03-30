@@ -1,6 +1,6 @@
 # Slurm cluster
 
-All Information on the page are subject to change! Especially hostnames are going to be replaced by nice alias names.
+All Information on the page are subject to change!
 
 The cluster consists of three partitions:
 * image1 with 11 compute nodes with 2x20 Intel-Cores each
@@ -24,25 +24,33 @@ Starting jobs outside the Slurm system is forbidden. The head-node must be kept 
 Table of Contents
 =================
 
-* [Slurm cluster](#slurm-cluster)
-  * [Basic Access and First Time Setup](#basic-access-and-first-time-setup)
-  * [General Information](#general-information)
-    * [ERDA](#ERDA)
-    * [Files](#files)
-    * [Using a more mordern compiler](#using-a-more-mordern-compiler)
-    * [Old Home directories on GPU](#old-home-directories-on-gpu)
-  * [Using Slurm](#using-slurm)
-    * [Examples for BatchScripts](#examples-for-batchscripts)
-      * [Minimal Example](#minimal-example)
-      * [Start an Array of Jobs using Matlab](#start-an-array-of-jobs-using-matlab)
-      * [Start a Job on the GPU cluster](#start-a-job-on-the-gpu-cluster)
-    * [Administrative Commands](#administrative-commands)
-      * [Rebooting Crashed Nodes](#rebooting-crashed-nodes)
-      * [Maintenance](#maintenance)
+* [Getting access](#getting-access)
+* [Support](#support)
+* [Basic Access and First Time Setup](#basic-access-and-first-time-setup)
+* [General Information](#general-information)
+  * [ERDA](#ERDA)
+  * [Files](#files)
+  * [Using a more mordern compiler](#using-a-more-mordern-compiler)
+  * [Old Home directories on GPU](#old-home-directories-on-gpu)
+* [Using Slurm](#using-slurm)
+  * [Examples for BatchScripts](#examples-for-batchscripts)
+    * [Minimal Example](#minimal-example)
+    * [Start an Array of Jobs using Matlab](#start-an-array-of-jobs-using-matlab)
+    * [Start a Job on the GPU cluster](#start-a-job-on-the-gpu-cluster)
+      
+
+## Getting access
+1. Request "SCI-DIKU-IMAGE-users" through identity.ku.dk
+2.  * Employees should send a mail to cluster-access@di.ku.dk
+    * Students should have their supervisor send a mail to cluster-access@di.ku.dk  
+
+
+## Support
+All support requests should be by mail to cluster-support@di.ku.dk
 
 
 ## Basic Access and First Time Setup
-For accessing the cluster, you need access to ssh-diku-image.science.ku.dk. Ask one of the Admins to grant you access.
+For accessing the cluster, you need access to ssh-diku-image.science.ku.dk.
 The way to access the cluster is with <kuid> being your ku-username:
 
     ssh <kuid>@ssh-diku-image.science.ku.dk
@@ -196,32 +204,3 @@ Asking for gpu resources requires running on the partition gpu and indicating wh
     hostname
     echo $CUDA_VISIBLE_DEVICES
     python3 yourScript.py
-
-### Administrative Commands
-Note: This section is for administrative purposes, once it becomes too big we will move it into another entry
-
-#### Rebooting Crashed Nodes
-After a crashed node got rebooted, Slurm will not trust it anymore, querying state will look like:
-
-    $ sudo scontrol show node a00562
-    NodeName=a00562 Arch=x86_64 CoresPerSocket=10
-       ...
-       State=DOWN 
-       ...
-       Reason=Node unexpectedly rebooted
-
-If we are sure that there is no hardware fault, we can simply tell Slurm to Resume operations with this node:
-
-    sudo scontrol update NodeName=a00562 State=RESUME
-
-####  Maintenance
-When a maintenance window is scheduled we want to drain the nodes, i.e. only jobs are allowed to run which will terminate before the maintenance starts.
-This can be done using:
-
-    sudo scontrol create reservation starttime=2017-10-12T16:00:00 duration=600 user=root flags=maint,ignore_jobs nodes=ALL
-
-here we initialize a maintenance window for 600minutes starting from the 12th october 20117, 4pm. When the maintenance window arrives we can sutdown the server using
-
-    sudo scontrol shutdown
-
-When the machines get rebooted, the slurm daemons will also come up automatically.
