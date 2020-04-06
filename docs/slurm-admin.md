@@ -7,6 +7,7 @@ Table of Contents
 * [Rebooting Crashed Nodes](#rebooting-crashed-nodes)
 * [Maintenance](#maintenance)
 * [Setup](#setup)
+* [Upgrade](#upgrade)
 
 ## Issues
 All cluster issues should be tracked through the github issue tracker https://github.com/diku-dk/wiki/issues
@@ -70,76 +71,31 @@ slurm, slurmctld, slurmd
 
 Same gid/uid is not required for munge. TODO: Check if needed for slurm.
 
-1. Create munge and slurm users
-```
-groupadd --system --gid 989 slurm
-useradd --system --uid 992 --gid 989 slurm
-groupadd --system --gid 990 munge
-useradd --system --uid 993 --gid 990 munge
-```
+There are scripts for installing and upgrading slurm in the github repo.
 
-2. Install munge
-```
-yum install munge munge-libs munge-devel
-yum install readline-devel openssl-devel perl-ExtUtils-MakeMaker pam-devel
-```
-copy /etc/munge/munge.key from head node
-munge must own /etc/munge/munge.key /var/lib/munge /var/log/munge
-Check that munge.key are identical
-Check uid/gid match with head node
+### Install slurm on gpu node
 
-3. Start and enable munged daemon via systemctl 
-```
-systemctl start munge
-systemctl enable munge
-```
+1. Create <server-name>-gres.conf file
+2. Set paths in `install_slurm.gpu.sh`
+3. `./install.slurm.gpu.sh <server-name>`
 
-4. Install slurm
-Packages for version 17.11.5-1 are currently located in /home/pcn178/rpmbuild/RPMS/x86_64
-```
-rpm --install slurm-17.11.5-1.el7.x86_64.rpm slurm-slurmd-17.11.5-1.el7.x86_64.rpm
-```
 
-5. Create and chown slurm directories
-```
-mkdir /etc/slurm /var/spool/slurmd /var/log/slurm
-chown slurm:slurm /var/spool/slurmd /var/log/slurm
-```
-Check if more is needed for JobCheckpointDir if we want that
+## Install slurm on cpu node
+TODO: make necesary adjustments to `install.slurm.gpu.sh` (maybe just get rid of gres part)
 
-6. Copy and update slurm config from head node
- - /etc/slurm/slurm.conf
-Add node to list at the bottom of config and add node to partition. Updated slurm.conf should be distributed to all other nodes
 
- - /etc/slurm/cgroup.conf
-No change is necesary
+## Upgrade
+Read the release notes carefully. Ensure that slurmdbd format is compatible.
+Build the new slurm packages. There are upgrade scripts in the githun repo.
 
-7. If machine is gpu add
-/etc/slurm/gres.conf (Adapt to each gpu machine)
-```
-# Example config. Update Type and File to match the machine
-# Configure support for our four GPUs
-Name=gpu Type=titanxp File=/dev/nvidia[0-2]
-Name=gpu Type=titanx File=/dev/nvidia3
-```
 
-8. start and enable slurmd daemon via systemctl 
-```
-systemctl start slurmd
-systemctl enable slurmd
-```
+### Upgrade slurm on comnpute node
 
-9. Check that new node is reachable and working
-```
-#!/bin/bash
-# Test script for gpu nodes. Add lines for new nodes
-srun -p gpu --gres=gpu:titanxp:3 --exclusive show_device.sh &
-srun -p gpu --gres=gpu:titanx:1  --exclusive show_device.sh &
-srun -p gpu --gres=gpu:teslak20:1 --exclusive show_device.sh &
-wait
-```
-```
-#!/bin/bash
-# show_device.sh
-echo ${CUDA_VISIBLE_DEVICES}
-```
+1. Set paths in `upgrade_slurm.gpu.sh`
+2. `./upgrade_slurm.sh`
+
+
+### Upgrade slurm on head node
+
+1. Set paths in `upgrade_slurm.gpu.sh`
+2. `./upgrade_slurm.sh`
