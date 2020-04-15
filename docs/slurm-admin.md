@@ -16,8 +16,9 @@ All cluster issues should be tracked through the github issue tracker https://gi
 ## Granting access
 1. Approve request through identity.ku.dk. Check that a mail was sent to `cluster-access@di.ku.dk`
 2. Add user to mail list `cluster-users@di.ku.dk`
-3. Add user to cluster db with the following script
+3. Add user to cluster db
 
+You can use this script
 
     # filename: add_user.sh
     #!/bin/bash
