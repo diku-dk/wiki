@@ -31,6 +31,7 @@ Table of Contents
 * [Basic Access and First Time Setup](#basic-access-and-first-time-setup)
 * [General Information](#general-information)
   * [ERDA](#erda)
+  * [SIF](#sif)
   * [Files](#files)
   * [Using a more mordern compiler](#using-a-more-mordern-compiler)
   * [Old Home directories on GPU](#old-home-directories-on-gpu)
@@ -119,6 +120,8 @@ You can use sshfs to mount an ERDA directory. Once you have access to ERDA, crea
     <path-to-your-script>
     ./unmount_erda.sh
 
+### SIF
+[https://diku-dk.github.io/wiki/slurm-sif](https://diku-dk.github.io/wiki/slurm-sif)
 
 ### Files
 Using the .ssh/config comes in handy if you want to copy your files via scp
