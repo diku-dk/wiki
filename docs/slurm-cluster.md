@@ -8,13 +8,14 @@ The cluster consists of three partitions:
 * gpu hosting various servers with the following gpu cards:
 
 
-| Name | Count |
-|--------------|
-| titanx | 11 |
-| titanxp | 4 |
-| testlak20 | 1 |
-| testlak40 | 1 |
-| gtx1080 | 1 |
+| Name      | Count  |
+|--------------------|
+| titanrtx  |     28 |
+| titanx    |     24 |
+| titanxp   |      4 |
+| testlak40 |      2 |
+| testlak20 |      1 |
+| gtx1080   |      4 |
 
 
 
@@ -25,10 +26,11 @@ Table of Contents
 =================
 
 * [Getting access](#getting-access)
+  * [Corona project users](#corona-project-users)
 * [Support](#support)
 * [Basic Access and First Time Setup](#basic-access-and-first-time-setup)
 * [General Information](#general-information)
-  * [ERDA](#ERDA)
+  * [ERDA](#erda)
   * [Files](#files)
   * [Using a more mordern compiler](#using-a-more-mordern-compiler)
   * [Old Home directories on GPU](#old-home-directories-on-gpu)
@@ -44,6 +46,8 @@ Table of Contents
 2.  * Employees should send a mail to cluster-access@di.ku.dk
     * Students should have their supervisor send a mail to cluster-access@di.ku.dk  
 
+### Corona project users
+Some resources are reserved for Corona related projects. If you need access to these resources send an email to [oswin.krause@di.ku.dk](mailto:oswin.krause@di.ku.dk).
 
 ## Support
 All support requests should be by mail to cluster-support@di.ku.dk
@@ -90,15 +94,21 @@ This is required for slurm to function properly! Simply execute the following. W
 ## General Information
 
 ### ERDA
-You can use sshfs to mount an ERDA directory. Note that you need to mount it on the machines that the job is submitted to. A simple approach is to make a script that mounts/unmounts the ERDA directory and call it in the slurm batch script. You can use an ssh key to login to ERDA.
+Go to [https://erda.dk](https://erda.dk) for access to ERDA.
+
+You can use sshfs to mount an ERDA directory. Once you have access to ERDA, create a new public/private key pair. Go to `Setup > SFTP` to add the public key to ERDA and put the private key in `~/.ssh` in your home dir on the cluster.
+
+ Note that you need to mount ERDA directories on the machines that the job is submitted to. A simple approach is to make scripts that mounts/unmounts the ERDA directory and call it in the slurm batch script. 
 
     # file: mount_erda.sh
     #!/bin/bash
     sshfs -o IdentityFile=<path-to-ssh-key> <user>@io.erda.dk:<directory> <mount-point>
 
+
     # file: unmount_erda.sh
     #!/bin/bash
     fusermount -u <mount-point>
+
 
     # file: <your-slurm-batch-script>
     #!/bin/bash	

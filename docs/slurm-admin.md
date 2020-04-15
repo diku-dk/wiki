@@ -18,14 +18,17 @@ All cluster issues should be tracked through the github issue tracker https://gi
 2. Add user to mail list `cluster-users@di.ku.dk`
 3. Add user to cluster db with the following script
 
-    #filename: add_user.sh
+
+    # filename: add_user.sh
     #!/bin/bash
     user=${1}
     echo ${user}
     sacctmgr add account ${user} Description="none" Organization="diku" Cluster=cluster Parent=users
     sacctmgr add user ${user} Account=${user} DefaultAccount=${user}
 
+
     $ sudo ./add_user.sh <ku-id>
+
 
 You then say yes to the two prompts. NOTE: This needs to be changed when students have separate resources.
 
