@@ -106,15 +106,29 @@ You can use sshfs to mount an ERDA directory. Once you have access to ERDA, crea
 
  Note that you need to mount ERDA directories on the machines that the job is submitted to. A simple approach is to make scripts that mounts/unmounts the ERDA directory and call it in the slurm batch script.
 
+`mount_erda.sh`
+
     # file: mount_erda.sh
     #!/bin/bash
-    sshfs -o IdentityFile=<path-to-ssh-key> <user>@io.erda.dk:<directory> <mount-point>
+    key=<path-to-ssh-key>
+    user=<kuid>
+    erdadir=<erda-dir-to-mount>
+    mnt=<mount-location>
+    if [ -f "$key" ]
+    then
+        mkdir -p ${mnt}
+        sshfs ${user}@io.erda.dk:${erdadir} ${mnt} -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3 -o IdentityFile=${key} 
+    else
+        echo "'${key}' is not an ssh key"
+    fi
 
+`unmount_erda.sh`
 
     # file: unmount_erda.sh
     #!/bin/bash
     fusermount -u <mount-point>
 
+`your-slurm-script.sh`
 
     # file: <your-slurm-batch-script>
     #!/bin/bash
