@@ -5,17 +5,16 @@ All Information on the page are subject to change!
 The cluster consists of three partitions:
 * image1 with 11 compute nodes with 2x20 Intel-Cores each
 * image2 with 1 compute nodes with 8x8 AMD cores each
-* gpu hosting various servers with the following gpu cards:
+* gpu with 12 nodes with the following gpu cards:
 
 
-| Name      | Count  |
-|--------------------|
-| titanrtx  |     28 |
-| titanx    |     24 |
-| titanxp   |      4 |
-| testlak40 |      2 |
-| testlak20 |      1 |
-| gtx1080   |      4 |
+| Name            | Count  |
+|--------------------------|
+| titanrtx        |     32 |
+| titanx (X/Xp/v) |     24 |
+| testlak40       |      2 |
+| testlak20       |      1 |
+| gtx1080         |      4 |
 
 
 
