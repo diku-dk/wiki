@@ -8,6 +8,8 @@ Table of Contents
 * [Maintenance](#maintenance)
 * [Setup](#setup)
 * [Upgrade](#upgrade)
+* [Usage stats](#usage-stats)
+  - [Calculate median wait time](#calculate-median-wait-time)
 
 ## Issues
 All cluster issues should be tracked through the github issue tracker https://github.com/diku-dk/wiki/issues
@@ -103,3 +105,24 @@ Build the new slurm packages. There are upgrade scripts in the githun repo.
 
 1. Set paths in `upgrade_slurm.gpu.sh`
 2. `./upgrade_slurm.sh`
+
+## Usage stats
+Use `sreport` and `sacct`. 
+
+### Calculate median wait time
+Use `sacct` to get stats for 2020
+
+    sudo sacct --starttime=2020-01-01 --format=submit,start --parsable2 > slurm/usage_stats/2020-01-01_2020-09-03_submit-start.csv
+
+Use R to aggregate
+
+    path <- 'slurm/usage_stats/2020-01-01_2020-09-03_submit-start.csv'
+    x <- read.csv(, sep='|')
+    x$Submit <- strptime(x$Submit, format="%Y-%m-%dT%H:%M:%S")
+    x$Start <- strptime(x$Start, format="%Y-%m-%dT%H:%M:%S")
+    x <- x[x$Submit$year == 120,] # For some reason we get stuff that is both submitted and started in 2019-12
+    x$Wait <- x$Start - x$Submit
+    x$SubmitMonth <- x$Submit$mon
+    res <- aggregate(list(WaitTimeInSeconds=x$Wait), by=list(SubmitMonth=x$SubmitMonth), FUN=function(x) { quantile(x, probs=seq(0,1,0.1), na.rm=TRUE) } )
+    print(data.frame(SubmitMonth=res$SubmitMonth, MedianWaitInSeconds=res$WaitTimeInSeconds[,6]))
+    write.csv(res, file='2020_wait-time_by-month.csv', quote=F, row.names=F)
