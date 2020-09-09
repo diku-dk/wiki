@@ -96,6 +96,17 @@ This is required for slurm to function properly! Simply execute the following. W
     ssh-keygen
     ssh-copy-id cluster
 
+On Windows 10 installations the configuration file should be placed in C:/Users/YOUR_WINDOWS_USER/.ssh/ and named config (without extension). If you encounter an error like
+
+> ssh cluster
+CreateProcessW failed error:2
+posix_spawn: No such file or directory
+
+you need to replace all three occasions of "ssh" in the ProxyCommand options with C:\Windows\System32\OpenSSH\ssh.exe , e.g.
+
+ProxyCommand C:\Windows\System32\OpenSSH\ssh.exe -q -W %h:%p gate-diku
+
+
 ## General Information
 
 ### ERDA
