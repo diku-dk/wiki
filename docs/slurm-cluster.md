@@ -229,6 +229,7 @@ While this connection persists in the background we can access the jupyter serve
     firefox 'http://127.0.0.1:15000/?token=d305ab86adaf9c96bf4e44611c2253a1c7da6ec9e61557c4'
 
 Remember to shut down the jupyter server once you are done and exit your login session (before your job ends):
+
     ^C[I 12:44:19.823 NotebookApp] interrupted
     Serving notebooks from local directory: /home/xyz123
     1 active kernel
