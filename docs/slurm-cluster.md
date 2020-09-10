@@ -197,6 +197,59 @@ you can checkout the remote repository on repo_server using
 
 Once you are done, you can close the tunnel using Ctrl-C.
 
+This can also be used to run interactive jupyter notebooks. We can launch an interactive shell using
+
+    [xyz123@a00552 ~]$ srun -p gpu --pty --time=00:30:00 --gres gpu:1 bash
+    [xyz123@gpu02-diku-image ~]$ ss -tln |grep :1234 # check if TCP port 1234 is occupied
+    LISTEN     0      128    127.0.0.1:1234                     *:*
+    [xyz123@gpu02-diku-image ~]$ ss -tln |grep :15000 # TCP port 1234 was occupied, let's check port 15000
+    [xyz123@gpu02-diku-image ~]$ # output is empty, we're good. Prepare your environment and launch the jupyter server
+    [xyz123@gpu02-diku-image ~]$ . ~/my_tf_env/bin/activate # Activate virtual python environment. Th
+    (my_tf_env) [xyz123@gpu02-diku-image ~]$ jupyter-notebook --host=127.0.0.1 --port=15000 --no-browser
+    [I 12:27:30.597 NotebookApp] Serving notebooks from local directory: /home/xyz123
+    [I 12:27:30.597 NotebookApp] Jupyter Notebook 6.1.4 is running at:
+    [I 12:27:30.597 NotebookApp] http://127.0.0.1:15000/?token=d305ab86adaf9c96bf4e44611c2253a1c7da6ec9e61557c4
+    [I 12:27:30.597 NotebookApp]  or http://127.0.0.1:15000/?token=d305ab86adaf9c96bf4e44611c2253a1c7da6ec9e61557c4
+    [I 12:27:30.597 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+    [C 12:27:30.614 NotebookApp]
+    
+        To access the notebook, open this file in a browser:
+            file:///home/xyz123/.local/share/jupyter/runtime/nbserver-5918-open.html
+        Or copy and paste one of these URLs:
+            http://127.0.0.1:15000/?token=d305ab86adaf9c96bf4e44611c2253a1c7da6ec9e61557c4
+         or http://127.0.0.1:15000/?token=d305ab86adaf9c96bf4e44611c2253a1c7da6ec9e61557c4
+
+The jupyter server is now running. To connect to it using the browser on your local machine you need use local port forwarding and connect to the correct compute node (e.g. gpu02-diku-image in our example):
+
+    localuser@localmachine> ssh -N -L 15000:127.0.0.1:15000 gpu02-diku-image
+    xyz123@ssh-diku-image.science.ku.dk's password: 
+
+While this connection persists in the background we can access the jupyter server using the URL from above:
+
+    firefox 'http://127.0.0.1:15000/?token=d305ab86adaf9c96bf4e44611c2253a1c7da6ec9e61557c4'
+
+Remember to shut down the jupyter server once you are done and exit your login session (before your job ends):
+    ^C[I 12:44:19.823 NotebookApp] interrupted
+    Serving notebooks from local directory: /home/xyz123
+    1 active kernel
+    Jupyter Notebook 6.1.4 is running at:
+    http://localhost:15000/?token=f503e6e409ba5043d4ddbd49af63b33da29974f19fa643d7
+     or http://127.0.0.1:15000/?token=f503e6e409ba5043d4ddbd49af63b33da29974f19fa643d7
+    Shutdown this notebook server (y/[n])? y
+    [C 12:44:24.824 NotebookApp] Shutdown confirmed
+    [I 12:44:24.829 NotebookApp] Shutting down 1 kernel
+    [I 12:44:25.231 NotebookApp] Kernel shutdown: 050c72b3-2eb9-4883-a357-0c0e0142808b
+    [I 12:44:25.233 NotebookApp] Shutting down 0 terminals
+    (my_tf_env) [xyz123@gpu02-diku-image ~]$ exit
+    exit
+    [xyz123@a00552 ~]$ 
+
+A few words of caution:
+
+1. Make sure to use a unique port (i.e. potentially not port 15000)
+2. Make sure to connect to the right compute node (i.e. potentially not gpu02-diku-image)
+3. This setup is considered experimental and might need some modifications to provide a stable experience
+
 ### Using a more mordern compiler
 Our operating system is RHEL 7, which by default comes with some old packages. For some packages it is possible to instead use a newer version, which is done via the scl command line tool. For example, to enable a modern set of development tools, including the compiler, run
 
