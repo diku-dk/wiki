@@ -200,11 +200,13 @@ Once you are done, you can close the tunnel using Ctrl-C.
 This can also be used to run interactive jupyter notebooks. We can launch an interactive shell using
 
     [xyz123@a00552 ~]$ srun -p gpu --pty --time=00:30:00 --gres gpu:1 bash
-    [xyz123@gpu02-diku-image ~]$ ss -tln |grep :1234 # check if TCP port 1234 is occupied
-    LISTEN     0      128    127.0.0.1:1234                     *:*
-    [xyz123@gpu02-diku-image ~]$ ss -tln |grep :15000 # TCP port 1234 was occupied, let's check port 15000
-    [xyz123@gpu02-diku-image ~]$ # output is empty, we're good. Prepare your environment and launch the jupyter server
-    [xyz123@gpu02-diku-image ~]$ . ~/my_tf_env/bin/activate # Activate virtual python environment. Th
+    [xyz123@gpu02-diku-image ~]$ ss -tln sport 1234 # check if TCP port 1234 is occupied
+    State      Recv-Q Send-Q Local Address:Port Peer Address:Port   Process
+    LISTEN     0      128    127.0.0.1:1234     *:*
+    [xyz123@gpu02-diku-image ~]$ ss -tln sport 15000 # TCP port 1234 was occupied, let's check port 15000
+    State      Recv-Q Send-Q Local Address:Port Peer Address:Port   Process
+    [xyz123@gpu02-diku-image ~]$ # Port is not occupied, we're good. Prepare your environment and launch the jupyter server
+    [xyz123@gpu02-diku-image ~]$ . ~/my_tf_env/bin/activate # Activate virtual python environment
     (my_tf_env) [xyz123@gpu02-diku-image ~]$ jupyter-notebook --host=127.0.0.1 --port=15000 --no-browser
     [I 12:27:30.597 NotebookApp] Serving notebooks from local directory: /home/xyz123
     [I 12:27:30.597 NotebookApp] Jupyter Notebook 6.1.4 is running at:
