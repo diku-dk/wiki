@@ -74,15 +74,18 @@ The simplest way is to add an entry in .ssh/config
     Host cluster
         HostName a00552
         User <kuid>
-        ProxyCommand ssh -q -W %h:%p gate-diku
+        ProxyJump gate-diku
     Host *-diku-image
         User <kuid>
-        ProxyCommand ssh -q -W %h:%p gate-diku
+        ProxyJump gate-diku
     Host *-diku-nlp
         User <kuid>
-        ProxyCommand ssh -q -W %h:%p gate-diku
+        ProxyJump gate-diku
+    Host *.science.domain
+        User <kuid>
+        ProxyJump gate-diku
 
-This also sets up your access to the gpu-machines gpu01-diku-image to gpu11-diku-image as well as gpu01-diku-nlp to gpu02-diku-nlp.
+This also sets up your access to the gpu-machines gpu01-diku-image to gpu11-diku-image as well as gpu02-diku-nlp. Canonical hostnames like a00701.science.domain work as well.
 
 With this in place, you can directly login at the cluster via
 
