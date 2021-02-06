@@ -53,16 +53,7 @@ Table of Contents
 Some resources are reserved for Corona related projects. If you need access to these resources send an email to [oswin.krause@di.ku.dk](mailto:oswin.krause@di.ku.dk).
 
 ### External guests
-Access to the cluster infrastructure requires an active account. Access for
-external guests can be requested via https://idm.ku.dk/ -> "Create External
-Guest". Make sure that the checkbox next to "Science guest" is ticked. The
-guest user must then follow the instructions outlined in the e-mail they
-receive. After about an hour access should be requested by the person
-responsible for the guest by dropping an e-mail with the relevant username to
-cluster-access@di.ku.dk, which allows the cluster administrators to add the
-role SCI-DIKU-IMAGE-users manually. After receiving a confirmation the external
-user must change their password via https://password.ku.dk/ , wait for up to
-ten minutes, and finally follow the instructions below.
+Access to external guests is not available at the moment. KU-IT has identified the root cause and is waiting for the changes required to be implemented.
 
 ## Support
 All support requests should be by mail to cluster-support@di.ku.dk
