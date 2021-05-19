@@ -42,6 +42,8 @@ Table of Contents
     * [Minimal Example](#minimal-example)
     * [Start an Array of Jobs using Matlab](#start-an-array-of-jobs-using-matlab)
     * [Start a Job on the GPU cluster](#start-a-job-on-the-gpu-cluster)
+  * [Scheduling many tasks](#scheduling-many-tasks)
+  * [Determining memory requirements](#determining-memory-requirements)
 
 
 ## Getting access
@@ -345,3 +347,34 @@ Asking for gpu resources requires running on the partition gpu and indicating wh
     hostname
     echo $CUDA_VISIBLE_DEVICES
     python3 yourScript.py
+
+### Scheduling many tasks
+Please take a look at [https://slurm.schedmd.com/job_array.html]. Job arrays
+are preferred to multiple jobs when you have a lot of tasks with the same
+requirements. They are easier on the scheduler, which does not need to
+attempt to schedule all tasks at the same time, but only a small subset. You
+can also use job arrays to limit the number of jobs run at the same time.
+This allows other users to use our cluster without having to wait.
+
+### Determining memory requirements
+Before running multiple jobs with high memory requirements consider running
+just one to see how much memory you need. Useful commands are
+/usr/bin/time (run like /usr/bin/time -v python my_script.py --my_param 42)
+it outputs multiple lines, including one which looks like this:
+
+    Maximum resident set size (kbytes): 1892412
+
+This suggests that you don't need more than 2 GB of memory for this job.
+Alternatively you can check the accounting database once your job has
+terminated, which might be less reliable:
+
+    [fwc817@a00552 ~]$ sacct -j <past_job_id> -o JobName,MaxRss,State,AllocCPUs
+   JobName     MaxRSS      State  AllocCPUS
+---------- ---------- ---------- ----------
+job_name_+             COMPLETED          2
+     batch  18462780K  COMPLETED          2
+
+This job shouldn't need more than 20 GB of RAM.
+
+Keeping these estimates low albeit realistic increases the utilisation of our
+hardware, which hopefully translates into lower waiting times.
