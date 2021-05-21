@@ -365,6 +365,6 @@ This suggests that you don't need more than 2 GB of memory for this job.  Altern
     job_name_+             COMPLETED          2
          batch  18462780K  COMPLETED          2
 
-This job shouldn't need more than 20 GB of RAM.
+This job shouldn't need more than 20 GB of RAM. Remember to add a suitable amount of RAM for shared memory (column SHR when using top). Using multiple processes makes this process even less straightforward and moves into the reign of educated guesswork.
 
 Keeping these estimates low albeit realistic increases the utilisation of our hardware, which hopefully translates into lower waiting times.
