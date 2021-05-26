@@ -61,7 +61,7 @@ fi
 
 
 # 6. Copy slurm config
-if !( cp ${confdir}/{slurm.conf,cgroup.conf} /etc/slurm ); then
+if !( cp ${confdir}/{slurm.conf,cgroup.conf,prolog.sh} /etc/slurm ); then
     echo "Failed to copy slurm config"
     exit 6
 fi
