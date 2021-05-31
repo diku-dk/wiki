@@ -5,16 +5,16 @@ All Information on the page are subject to change!
 The cluster consists of three partitions:
 * image1 with 11 compute nodes with 2x20 Intel-Cores each
 * image2 with 1 compute nodes with 8x8 AMD cores each
-* gpu with 12 nodes with the following gpu cards:
+* gpu with 14 nodes with the following gpu cards:
 
 
-| Name            | Count  |
-|--------------------------|
-| titanrtx        |     32 |
-| titanx (X/Xp/v) |     24 |
-| testlak40       |      2 |
-| testlak20       |      1 |
-| gtx1080         |      4 |
+| Name            | Model                       | Count |
+|-----------------|-----------------------------|-------|
+| titanrtx        | Titan RTX + Quadro RTX 6000 |    48 |
+| titanx          | Titan X/Xp/V                |    24 |
+| testlak40       | Tesla K40                   |     2 |
+| testlak20       | Tesla K20                   |     1 |
+| gtx1080         | GTX 1080                    |     4 |
 
 
 
