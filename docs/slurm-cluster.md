@@ -44,8 +44,8 @@ Table of Contents
     * [Start a Job on the GPU cluster](#start-a-job-on-the-gpu-cluster)
   * [Scheduling many tasks](#scheduling-many-tasks)
   * [Determining memory requirements](#determining-memory-requirements)
-* [Behind the Scenes][#behind-the-scenes]
-  * [Scheduling][#scheduling]
+* [Behind the Scenes](#behind-the-scenes)
+  * [Scheduling](#scheduling)
 
 
 ## Getting access
@@ -371,7 +371,7 @@ This job shouldn't need more than 20 GB of RAM. Remember to add a suitable amoun
 
 Keeping these estimates low albeit realistic increases the utilisation of our hardware, which hopefully translates into lower waiting times.
 
-## Behind the Scenes]
+## Behind the Scenes
 ### Scheduling
 After submitting a job (via sbatch or srun) it enters the scheduling queue. If there are no other jobs waiting it will reside there until enough resources (i.e. a node which satisfies the requested resources, including GPUs, CPU core count, and memory) are available. Until then it will show up in the scheduling queue like this:
 
