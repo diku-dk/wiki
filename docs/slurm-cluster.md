@@ -44,6 +44,8 @@ Table of Contents
     * [Start a Job on the GPU cluster](#start-a-job-on-the-gpu-cluster)
   * [Scheduling many tasks](#scheduling-many-tasks)
   * [Determining memory requirements](#determining-memory-requirements)
+* [Behind the Scenes][#behind-the-scenes]
+  * [Scheduling][#scheduling]
 
 
 ## Getting access
@@ -368,3 +370,28 @@ This suggests that you don't need more than 2 GB of memory for this job.  Altern
 This job shouldn't need more than 20 GB of RAM. Remember to add a suitable amount of RAM for shared memory (column SHR when using top). Using multiple processes makes this process even less straightforward and moves into the reign of educated guesswork.
 
 Keeping these estimates low albeit realistic increases the utilisation of our hardware, which hopefully translates into lower waiting times.
+
+## Behind the Scenes]
+### Scheduling
+After submitting a job (via sbatch or srun) it enters the scheduling queue. If there are no other jobs waiting it will reside there until enough resources (i.e. a node which satisfies the requested resources, including GPUs, CPU core count, and memory) are available. Until then it will show up in the scheduling queue like this:
+
+    [fwc817@a00552 ~]$ squeue
+                 JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+               1894291       gpu     bash   fwc817 PD       0:00      1 (Resources)
+
+If there are enough other jobs waiting to be scheduled those jobs' priorities become relevant:
+
+    [fwc817@a00552 ~]$ sprio
+              JOBID PARTITION   PRIORITY       SITE        AGE  FAIRSHARE    JOBSIZE  PARTITION
+            1894294 gpu              314          0          0        284         20         10
+
+The most important factors which increase a job's priority are
+- Age: this favours jobs which have been waiting for resources over recently submitted ones
+- Fairshare: this inversely correlates with your account's general usage of the slurm cluster
+- Job size: larger jobs are favoured over smaller jobs so they are not blocked in the queue for too long. Don't try to abuse this as it is unfair to other users and we'd be forced to increase the weight of the Fairshare factor
+- Niceness: you can decrease your job's priority by increasing its niceness (sbatch --nice=1000). Usually it's 100, which decreases a job's priority (as seen in the output of sprio) by 100.
+
+In regular intervals all jobs' priorities are recomputed. Those with the highest priority are considered in order of decreasing priority for resources allocation. Jobs are then executed if resources for that job are available and if either
+
+1. the job under consideration has the highest priority or
+2. starting the job under consideration does not delay the expected start time (check squeue --start) of any job submitted before this job (backfill scheduling).
