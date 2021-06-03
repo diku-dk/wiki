@@ -1,0 +1,31 @@
+# Just starting tmux via "tmux a" creates sessions to all GPU servers.
+# Remember to close them again so your home directory can be unmounted.
+
+set-option -g prefix C-a
+set-option -g default-terminal screen
+unbind-key C-b
+bind-key C-a send-prefix
+
+new-session  "ssh gpu01-diku-image"
+split-window "ssh gpu02-diku-image"
+split-window "ssh gpu03-diku-image"
+split-window "ssh gpu04-diku-image"
+select-layout tiled
+
+new-window   "ssh gpu05-diku-image"
+split-window "ssh gpu06-diku-image"
+split-window "ssh gpu07-diku-image"
+split-window "ssh gpu08-diku-image"
+select-layout tiled
+
+new-window   "ssh gpu09-diku-image"
+split-window "ssh gpu10-diku-image"
+split-window "ssh gpu11-diku-image"
+split-window "ssh gpu02-diku-nlp"
+select-layout tiled
+
+new-window   "ssh a00882"
+split-window "ssh a00883"
+split-window
+split-window
+select-layout tiled

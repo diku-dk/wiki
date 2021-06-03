@@ -1,0 +1,82 @@
+# A collection of commands I found in my bash history
+
+# Check status of slurmctld on head node
+sudo tail -f /var/log/slurm/slurmctld.log
+udo less /var/log/slurm/slurmctld.log
+sudo systemctl status slurmctld
+
+# Restart slurmctld. This should reload the configuration relevant for
+# slurmctld and also restore the scheduling queue
+sudo systemctl restart slurmctld
+
+# Check status of slurmd on nodes
+sudo less /var/log/slurm/slurmd.log
+
+# Failed nodes
+sinfo -R
+
+# Scheduling
+# See option DebugFlags=Backfill in slurm.conf
+# Consider adding yourselves to all groups (gpu_priority, ...) mentioned in
+# slurm.conf
+squeue --start
+sprio
+
+# Usage / inspect jobs / nodes
+scontrol show job <jobid>
+sacct -j <jobid>
+sacct -u <user> -S 2021-01-01
+scontrol show node a0086[0-3]
+sudo scontrol update NodeName=a00862 State=RESUME
+sudo scontrol update NodeName=a00862 State=DRAIN Reason="reboot required"
+
+top -u <uid_or_username>
+ps -fHu <username>
+
+squeue -w a0086[0-3] -O endtime,jobid,nodelist |sort
+
+# Investigate rogue GPU device usage on node
+nvidia-smi
+sudo journalctl -t srunprolog -S 2021-01-31 -U 2021-02-03 |grep --col CUDA_VISIBLE_DEVICES
+
+# Install cudnn
+wget https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/libcudnn8-8.2.0.53-1.cuda11.3.x86_64.rpm
+wget https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/libcudnn8-8.2.0.53-1.cuda10.2.x86_64.rpm
+mkdir cuda10.2 cuda11.3
+pushd cuda10.2
+rpm2cpio ../libcudnn8-8.2.0.53-1.cuda10.2.x86_64.rpm |cpio -id
+popd
+pushd cuda11.3
+rpm2cpio ../libcudnn8-8.2.0.53-1.cuda11.3.x86_64.rpm |cpio -id
+popd
+for i in 10.0 10.1 10.2; do sudo cp -ai cuda10.2/usr/lib64/libcudnn* /usr/local/cuda-${i}/lib64/; done
+for i in 11.0; do sudo cp -ia cuda11.3/usr/lib64/libcudnn* /usr/local/cuda-${i}/lib64/; done
+
+# Perhaps also this one
+wget https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/libcudnn8-devel-8.2.0.53-1.cuda10.2.x86_64.rpm https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/libcudnn8-devel-8.2.0.53-1.cuda11.3.x86_64.rpm
+
+sudo ldconfig
+
+# To install iftop: sudo yum install iftop
+
+# Priority groups
+sudo groupadd newpriogroup
+sudo usermod -aG newpriogroup <user>
+
+# Installing new nodes
+# Make sure the uid / gid for munge and slurm are correct. Manual
+# intervention:
+sudo groupmod -g 990 munge
+sudo usermod -u 993 -g 990 munge
+sudo chown -R munge:munge /etc/munge /var/log/munge /run/munge /var/lib/munge
+
+# From scratch (I think)
+sudo groupadd --system --gid 989 slurm
+sudo groupadd --system --gid 990 munge
+sudo groupmod -g 990 munge
+sudo useradd --system --uid 992 --gid 989 slurm
+sudo useradd --system --uid 993 --gid 990 munge
+sudo chown -R munge:munge /etc/munge /var/log/munge
+
+# After rebooting Titan RTX GPU machines
+sudo nvidia-smi --persistence-mode=1
