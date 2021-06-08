@@ -39,24 +39,6 @@ squeue -w a0086[0-3] -O endtime,jobid,nodelist |sort
 nvidia-smi
 sudo journalctl -t srunprolog -S 2021-01-31 -U 2021-02-03 |grep --col CUDA_VISIBLE_DEVICES
 
-# Install cudnn
-wget https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/libcudnn8-8.2.0.53-1.cuda11.3.x86_64.rpm
-wget https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/libcudnn8-8.2.0.53-1.cuda10.2.x86_64.rpm
-mkdir cuda10.2 cuda11.3
-pushd cuda10.2
-rpm2cpio ../libcudnn8-8.2.0.53-1.cuda10.2.x86_64.rpm |cpio -id
-popd
-pushd cuda11.3
-rpm2cpio ../libcudnn8-8.2.0.53-1.cuda11.3.x86_64.rpm |cpio -id
-popd
-for i in 10.0 10.1 10.2; do sudo cp -ai cuda10.2/usr/lib64/libcudnn* /usr/local/cuda-${i}/lib64/; done
-for i in 11.0; do sudo cp -ia cuda11.3/usr/lib64/libcudnn* /usr/local/cuda-${i}/lib64/; done
-
-# Perhaps also this one
-wget https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/libcudnn8-devel-8.2.0.53-1.cuda10.2.x86_64.rpm https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/libcudnn8-devel-8.2.0.53-1.cuda11.3.x86_64.rpm
-
-sudo ldconfig
-
 # To install iftop: sudo yum install iftop
 
 # Priority groups
@@ -77,6 +59,26 @@ sudo groupmod -g 990 munge
 sudo useradd --system --uid 992 --gid 989 slurm
 sudo useradd --system --uid 993 --gid 990 munge
 sudo chown -R munge:munge /etc/munge /var/log/munge
+
+# Install packages
+sudo yum install python3 sshfs devtoolset-7 cuda-10-0 cuda-10-1 cuda-10-2 cuda-11-0 cuda-9-0 cuda-9-2
+
+# Install cudnn
+wget https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/libcudnn8-8.2.0.53-1.cuda11.3.x86_64.rpm
+wget https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/libcudnn8-8.2.0.53-1.cuda10.2.x86_64.rpm
+mkdir cuda10.2 cuda11.3
+pushd cuda10.2
+rpm2cpio ../libcudnn8-8.2.0.53-1.cuda10.2.x86_64.rpm |cpio -id
+popd
+pushd cuda11.3
+rpm2cpio ../libcudnn8-8.2.0.53-1.cuda11.3.x86_64.rpm |cpio -id
+popd
+for i in 10.0 10.1 10.2; do sudo cp -ai cuda10.2/usr/lib64/libcudnn* /usr/local/cuda-${i}/lib64/; done
+for i in 11.0 11.2; do sudo cp -ia cuda11.3/usr/lib64/libcudnn* /usr/local/cuda-${i}/lib64/; done
+sudo ldconfig
+
+# Perhaps also this one
+wget https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/libcudnn8-devel-8.2.0.53-1.cuda10.2.x86_64.rpm https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/libcudnn8-devel-8.2.0.53-1.cuda11.3.x86_64.rpm
 
 # After rebooting Titan RTX GPU machines
 sudo nvidia-smi --persistence-mode=1
