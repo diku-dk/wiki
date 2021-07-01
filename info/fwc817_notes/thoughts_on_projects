@@ -1,0 +1,11 @@
+- Interactive nodes:
+  - Reservations: https://slurm.schedmd.com/reservations.html
+  - PrologSlurmctld: https://slurm.schedmd.com/prolog_epilog.html
+    - Can failure handling be modified so batch jobs don't get requeued forever?
+    - Are all relevant information available? Otherwise another prolog type
+      should be used
+
+- cgroups https://slurm.schedmd.com/cgroups.html
+  - Ideally: restrict memory, CPU resources, and GPUs
+  - Should ssh access to compute nodes be disabled for regular users?
+  - This incentivises overallocating resources. How can this be offset?

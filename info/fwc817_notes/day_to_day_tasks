@@ -1,0 +1,13 @@
+Reply to any e-mail sent to cluster-support@di.ku.dk
+- From time to time:
+  - Check CPU/RAM usage on head node: kill processes which occupy too many resources (e.g. > 20% RAM), remind users not to use it for CPU/memory-intensive processes
+  - Very long queue (> 1000 entries): remind users to use slurm arrays, which are easier on the scheduler
+- In case of complaints:
+  - Potentially look up username via https://identity.ku.dk/
+  - Long waiting times
+    - Check whether GPUs are actually in use (nvidia-smi -> GPU-Utilisation)
+    - Ask those users (ps -p) to stop their processes
+  - Rogue GPU usage
+    - Check nvidia-smi and allocated devices (e.g. sudo journalctl -t srunprolog -e |grep --col CUDA_VIS)
+    - Processes not started via slurm: kill
+      - Exception: /dev/nvidia* devices have disappeared and potentially reappeared. In that case: drain node and and restart it when all jobs have completed. This is happened only once in 16 months
