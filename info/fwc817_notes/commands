@@ -75,6 +75,13 @@ rpm2cpio ../libcudnn8-8.2.0.53-1.cuda11.3.x86_64.rpm |cpio -id
 popd
 for i in 10.0 10.1 10.2; do sudo cp -ai cuda10.2/usr/lib64/libcudnn* /usr/local/cuda-${i}/lib64/; done
 for i in 11.0 11.2; do sudo cp -ia cuda11.3/usr/lib64/libcudnn* /usr/local/cuda-${i}/lib64/; done
+
+# cudnn 7
+for i in 0 1 2; do sudo cp -ia 10.${i}/lib64/* /usr/local/cuda-10.${i}/lib64/; done
+for i in 0 2; do sudo cp -ia 9.${i}/lib64/* /usr/local/cuda-9.${i}/lib64/; done
+
+find /usr/local -user fwc817 -exec sudo chown root:root {} \+
+sudo rm libcudnn.so libcudnn.so.7; sudo ln -s libcudnn.so.7.3.1 libcudnn.so.7; sudo ln -s libcudnn.so.7 libcudnn.so
 sudo ldconfig
 
 # Perhaps also this one

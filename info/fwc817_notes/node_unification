@@ -1,0 +1,5 @@
+- Simplify package management for cluster administrators. It's easy to forget
+  nodes when using for-loop/ssh/sudo-based solutions and packages can be
+  forgotten when setting up new nodes
+- Fix user ids for munge and slurm
+- /usr/local/cuda should point to /etc/alternatives/cuda
