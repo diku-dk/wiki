@@ -52,6 +52,11 @@ Table of Contents
 2.  * Employees should send a mail to cluster-access@di.ku.dk
     * Students should have their supervisor send a mail to cluster-access@di.ku.dk
 
+
+### External guests
+Access to the cluster infrastructure requires an active account. Access for external guests can be requested by a KU employee via https://identity.ku.dk/ -> "Menu button" -> "Manage Identity" -> "Create external guest". Make sure that the checkbox next to "Science guest" is ticked. The guest user must then follow the instructions outlined in the e-mail they receive. Afterwards they can request the required role via "https://identity-guest.ku.dk/identityiq/login.jsf" -> Login -> "Manage My Access" -> Search -> Select check button next to "SCI-DIKU-IMAGE-users" -> Next -> Submit. Afterwards the KU employee should send an e-mail to cluster-access@di.ku.dk including the external guest's e-mail address as well as their name or user id. Once the external guest receives our welcome e-mail they should follow the steps below.
+
+
 ## Support
 All support requests should be by mail to cluster-support@di.ku.dk
 
