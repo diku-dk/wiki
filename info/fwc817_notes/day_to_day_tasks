@@ -1,4 +1,10 @@
 Reply to any e-mail sent to cluster-support@di.ku.dk
+- daily: Check for nodes that are down
+  - sinfo -R
+  - check whether something is up and track unexpected reboots at #40
+  - resume nodes: sudo scontrol update NodeName=<NodeID> state=RESUME
+  - check for jobs that are pending due to crashed nodes
+  - resume jobs: scontrol release <JobID> 
 - From time to time:
   - Check CPU/RAM usage on head node: kill processes which occupy too many resources (e.g. > 20% RAM), remind users not to use it for CPU/memory-intensive processes
   - Very long queue (> 1000 entries): remind users to use slurm arrays, which are easier on the scheduler
