@@ -52,6 +52,7 @@ Table of Contents
 1. Request "SCI-DIKU-IMAGE-users" through identity.ku.dk
 2.  * Employees should send a mail to cluster-access@di.ku.dk
     * Students should have their supervisor send a mail to cluster-access@di.ku.dk
+    * remember in both cases to include the KU-ID \<xxx000\>
 
 ### Corona project users
 Some resources are reserved for Corona related projects. If you need access to these resources send an email to [oswin.krause@di.ku.dk](mailto:oswin.krause@di.ku.dk).
