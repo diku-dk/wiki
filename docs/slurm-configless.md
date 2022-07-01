@@ -15,10 +15,10 @@ https://slurm.schedmd.com/configless_slurm.html
 Currently, configless is used to copy the contents of `slurm.conf` and `gres.conf` to all compute nodes. On the head node,
 they are still located in the directory `/etc/slurm`, while the compute nodes might not even have an `/etc/slurm directory`
 
-###Contacting the Head Node
+### Contacting the Head Node
 When a compute node boots up it normally first checks whether it can find a local configuration file. If that is not the case, it enters configless node in which
 it tries to find and contact the shead server and obtian all config files. For this, there are two options supported by slurm: either, a config option is provided when slurm starts up,
-or a DNS SRV entry can be queried. The DNS SRV entry must be configured by science-it and reads:
+or a DNS SRV entry can be queried. The DNS SRV entry must be configured by KU-IT and reads:
 
     _slurmctld._tcp 3600 IN SRV 0 0 6817 hendrixhead01fl.science.domain
 
