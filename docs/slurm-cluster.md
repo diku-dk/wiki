@@ -25,7 +25,6 @@ Table of Contents
 =================
 
 * [Getting access](#getting-access)
-  * [Corona project users](#corona-project-users)
   * [External guests](#external-guests)
 * [Support](#support)
 * [Basic Access and First Time Setup](#basic-access-and-first-time-setup)
@@ -52,12 +51,6 @@ Table of Contents
 1. Request "SCI-DIKU-IMAGE-users" through identity.ku.dk
 2.  * Employees should send a mail to cluster-access@di.ku.dk
     * Students should have their supervisor send a mail to cluster-access@di.ku.dk
-
-### Corona project users
-Some resources are reserved for Corona related projects. If you need access to these resources send an email to [oswin.krause@di.ku.dk](mailto:oswin.krause@di.ku.dk).
-
-### External guests
-Access to external guests is not available at the moment. KU-IT has identified the root cause and is waiting for the changes required to be implemented.
 
 ## Support
 All support requests should be by mail to cluster-support@di.ku.dk
