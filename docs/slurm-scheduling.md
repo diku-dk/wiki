@@ -59,10 +59,10 @@ The current weight factors are:
 
 |   |CPU|GPU|A100|
 |---|---|---|---|
-|$\alpha$|0.0625|0.5|1.0|
+|$\alpha$|0.625|5|10|
 
-Just requesting an arbitrary GPU incures a billing factor of 0.5. This GPU might be an A100, but also one of our smaller cards. If an A100 is explicitely requested,
-this incurs an additional cost on your job and the resulting cost of an a100 is 1.5. You can query the billing factor of a job with 
+Just requesting an arbitrary GPU incures a billing factor of 5. This GPU might be an A100, but also one of our smaller cards. If an A100 is explicitely requested,
+this incurs an additional cost on your job and the resulting cost of an a100 is 15. You can query the billing factor of a job with 
 
     sacct -X --format=AllocTRES%60,Elapsed -j $jobid
     
@@ -70,26 +70,32 @@ this incurs an additional cost on your job and the resulting cost of an a100 is 
 ### Examples
 Using the default values, requesting an arbirary GPU using `--gres=gpu:1` also allocates 8 CPUs to your job, which incurs a billing factor of:
 
-$$F_\text{billing} = 0.0625\cdot8+0.5=1$$
+$$F_\text{billing} = 0.625\cdot8+5=10$$
 
 The output of `sacct` for a job with jobid 59 with `--gres=gpu:1` produces
 
     $ sacct -X --format=AllocTRES%60,Elapsed -j 59
                                                    AllocTRES    Elapsed
        ----------------------------------------------------- ----------
-                billing=1,cpu=8,gres/gpu=1,mem=32000M,node=1   00:01:16
+                billing=10,cpu=8,gres/gpu=1,mem=32000M,node=1   00:01:16
                 
 Changing the request resources to `--gres=gpu:a100:1` results in:
 
-$$F_\text{billing} = 0.0625\cdot8+0.5+1=2$$
+$$F_\text{billing} = 0.625\cdot8+5+10=20$$
 
 with the output of sacct being:
 
     $ sacct -X --format=AllocTRES%60,Elapsed -j 60
                                                        AllocTRES    Elapsed
            ----------------------------------------------------- ----------
-    billing=2,cpu=8,gres/gpu:a100=1,gres/gpu=1,mem=32000M,node=1   00:01:25
+    billing=20,cpu=8,gres/gpu:a100=1,gres/gpu=1,mem=32000M,node=1   00:01:25
 
+allocating moe than twice the default memory (`--mem=128G`) will increase the number of cpu cores and thus the billing factor:
+
+    $ sacct -X --format=AllocTRES%60,Elapsed -j 79
+                                                       AllocTRES    Elapsed
+           ----------------------------------------------------- ----------
+    billing=25,cpu=16,gres/gpu:a100=1,gres/gpu=1,mem=128G,node=1   00:01:05
 
 ## Scheduling Priority
 Scheduling priority is computed as a sum of two values
