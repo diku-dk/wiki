@@ -13,23 +13,15 @@ https://slurm.schedmd.com/configless_slurm.html
 ## Setup
 
 Currently, configless is used to copy the contents of `slurm.conf` and `gres.conf` to all compute nodes. On the head node,
-they are still located in the directory `/etc/slurm`, while the compute nodes might not even have an `/etc/slurm directory`
+they are still located in the directory `/etc/slurm`, while the compute nodes do not even have an `/etc/slurm directory`
 
 ### Contacting the Head Node
 When a compute node boots up it normally first checks whether it can find a local configuration file. If that is not the case, it enters configless node in which
-it tries to find and contact the shead server and obtian all config files. For this, there are two options supported by slurm: either, a config option is provided when slurm starts up,
-or a DNS SRV entry can be queried. The DNS SRV entry must be configured by KU-IT and reads:
+it tries to find and contact the head server and obtain all config files. For this, we use DNS lookup via the following DNS SRV entry:
 
     _slurmctld._tcp 3600 IN SRV 0 0 6817 hendrixhead01fl.science.domain
 
-where the last two entries describe the SLURM headnode port and the address of the headnode. If this entry is not set,
-the option must be provided manually. Since we use systemd to control slurmd, we need to add the config options to `/etc/sysconfig/slurmd`
-
-    SLURMD_OPTIONS=--conf-server hendrixhead01fl.science.domain:6817
-    
-Here `SLURMD_OPTIONS` is the envronment variable that systemd uses to provide additional options to slurmd and `--conf-server`
-is the option that we set to the value of host address and port. We currently use this option but we will change this as soon as the DNS SRV entry is set.
-
+where the last two entries describe the SLURM headnode port and the address of the headnode.
 
 ## GRES.conf
 
