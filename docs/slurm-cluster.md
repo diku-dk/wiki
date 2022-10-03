@@ -2,25 +2,6 @@
 
 All Information on the page are subject to change!
 
-The cluster consists of three partitions:
-* image1 with 11 compute nodes with 2x20 Intel-Cores each
-* image2 with 1 compute nodes with 8x8 AMD cores each
-* gpu with 14 nodes with the following gpu cards:
-
-
-| Name            | Model                       | Count |
-|-----------------|-----------------------------|-------|
-| titanrtx        | Titan RTX + Quadro RTX 6000 |    48 |
-| titanx          | Titan X/Xp/V                |    24 |
-| testlak40       | Tesla K40                   |     2 |
-| testlak20       | Tesla K20                   |     1 |
-| gtx1080         | GTX 1080                    |     4 |
-
-
-
-Starting jobs outside the Slurm system is forbidden. The head-node must be kept available. Jobs that are not scheduled via slurm will get killed, either manually or automatically.
-
-
 Table of Contents
 =================
 
@@ -29,13 +10,12 @@ Table of Contents
 * [Support](#support)
 * [Basic Access and First Time Setup](#basic-access-and-first-time-setup)
 * [General Information](#general-information)
+  * [Available GPUs](#available-gpus)
+  * [Software Modules](#software-modules)
   * [ERDA](#erda)
   * [SIF](#sif)
   * [Files](#files)
-  * [sshfs](#sshfs)
   * [ssh tunnelling and port forwarding](#ssh-tunnelling-and-port-forwarding)
-  * [Using a more mordern compiler](#using-a-more-mordern-compiler)
-  * [Old Home directories on GPU](#old-home-directories-on-gpu)
 * [Using Slurm](#using-slurm)
   * [Examples for BatchScripts](#examples-for-batchscripts)
     * [Minimal Example](#minimal-example)
@@ -48,13 +28,13 @@ Table of Contents
 
 
 ## Getting access
-1. Request "SCI-DIKU-IMAGE-users" through identity.ku.dk
+1. Request "SRV-hendrixgate-users" through identity.ku.dk
 2.  * Employees should send a mail to cluster-access@di.ku.dk
     * Students should have their supervisor send a mail to cluster-access@di.ku.dk
 
 
 ### External guests
-Access to the cluster infrastructure requires an active account. Access for external guests can be requested by a KU employee via https://identity.ku.dk/ -> "Menu button" -> "Manage Identity" -> "Create external guest". Make sure that the checkbox next to "Science guest" is ticked. The guest user must then follow the instructions outlined in the e-mail they receive. Afterwards they can request the required role via "https://identity-guest.ku.dk/identityiq/login.jsf" -> Login -> "Manage My Access" -> Search -> Select check button next to "SCI-DIKU-IMAGE-users" -> Next -> Submit. Afterwards the KU employee should send an e-mail to cluster-access@di.ku.dk including the external guest's e-mail address as well as their name or user id. Once the external guest receives our welcome e-mail they should follow the steps below.
+Access to the cluster infrastructure requires an active account. Access for external guests can be requested by a KU employee via https://identity.ku.dk/ -> "Menu button" -> "Manage Identity" -> "Create external guest". Make sure that the checkbox next to "Science guest" is ticked. The guest user must then follow the instructions outlined in the e-mail they receive. Afterwards they can request the required role via "https://identity-guest.ku.dk/identityiq/login.jsf" -> Login -> "Manage My Access" -> Search -> Select check button next to "SRV-hendrixgate-users" -> Next -> Submit. Afterwards the KU employee should send an e-mail to cluster-access@di.ku.dk including the external guest's e-mail address as well as their name or user id. Once the external guest receives our welcome e-mail they should follow the steps below.
 
 
 ## Support
@@ -62,75 +42,83 @@ All support requests should be by mail to cluster-support@di.ku.dk
 
 
 ## Basic Access and First Time Setup
-For accessing the cluster, you need access to ssh-diku-image.science.ku.dk.
-The way to access the cluster is with <kuid> being your ku-username:
+The server is accessed via a two-layer access: first you connect to the university network,
+and then you use ssh to connect to the server. To connect to the university network, either, use a direct network cable
+connection in yor office or use VPN. VPN comes pre-installed on KU-Computer and for MacOSX and Windows there are guides
+online on [kunet](https://kunet.ku.dk/employee-guide/Pages/IT/Remote-access.aspx). For Linux, please download the fitting
+[AnyConnect Secure Mobility Client v4.x](https://software.cisco.com/download/home/283000185).
 
-    ssh <kuid>@ssh-diku-image.science.ku.dk
-    ssh a00552
 
-The simplest way is to add an entry in .ssh/config
+VPN Access comes pre-installed on KU-Computer and if you
+have a direct cable connection in your office, you do not nee
 
-    Host gate-diku
-        HostName ssh-diku-image.science.ku.dk
+For the second step, you need to install and configure ssh. Put the following in your `~/.ssh/config` (Linux/MacOS) or
+in `C:/Users/YOUR_WINDOWS_USER/.ssh/config` (Windows, a simple text file with no file ending!):
+
+    Host hendrix
+        HostName hendrixgate
         User <kuid>
-    Host cluster
-        HostName a00552
-        User <kuid>
-        ProxyJump gate-diku
-    Host *-diku-image
-        User <kuid>
-        ProxyJump gate-diku
-    Host *-diku-nlp
-        User <kuid>
-        ProxyJump gate-diku
-    Host *.science.domain
-        User <kuid>
-        ProxyJump gate-diku
+        StrictHostKeyChecking no
+        CheckHostIP no
+        UserKnownHostsFile=/dev/null
 
-This also sets up your access to the gpu-machines gpu01-diku-image to gpu11-diku-image as well as gpu02-diku-nlp. Canonical hostnames like a00701.science.domain work as well.
+With this in place, you can open a terminal (cmd or PowerShell in Windows) and run
 
-With this in place, you can directly login at the cluster via
-
-    ssh cluster
-
-Or access the gpu-node gpu01-diku-image via
-
-    ssh gpu01-diku-image
-
-This will ask two times for your password.
-
-After your first login, you have to setup a private key which allows password free login to any of the other nodes.
-This is required for slurm to function properly! Simply execute the following. When asked for a password, leave blank:
-
-    ssh-keygen
-    ssh-copy-id cluster
-
-On Windows 10 installations the configuration file should be placed in C:/Users/YOUR_WINDOWS_USER/.ssh/ and named config (without extension). If you encounter an error like
-
-    > ssh cluster
-    CreateProcessW failed error:2
-    posix_spawn: No such file or directory
-
-you need to replace all three occasions of "ssh" in the ProxyCommand options with C:\Windows\System32\OpenSSH\ssh.exe , e.g.
-
-    ProxyCommand C:\Windows\System32\OpenSSH\ssh.exe -q -W %h:%p gate-diku
-
+    ssh hendrix
+    
+This will connect you to a (random) gateway server. Gateway servers are small, relatively weak virtual machines and each time you login, you can be connected to a different
+server. As a normal use, you are not able to connect to the compute servers directly. Gateway servers allow you to compile programs or run small evaluation scripts, but anything that requires real compute power must be run on the compute servers via slurm. 
 
 ## General Information
+
+### Available GPUs
+
+The cluster currently hosts one main partition with the following GPU cards(TODO!):
+
+
+| Resource-Name   | Model                       | Count | Memory(GB) |
+|-----------------|-----------------------------|-------|----------- |
+| A100            | Nvidia A100                 |    14 | 40         |
+| A40             | Nvidia A40                  |    10 | 40         |
+| titanrtx        | Titan RTX + Quadro RTX 6000 |    48 | ??         |
+| titanx          | Titan X/Xp/V                |    24 | ??         |
+| testlak40       | Tesla K40                   |     2 | ??         |
+| testlak20       | Tesla K20                   |     1 | ??         |
+| gtx1080         | GTX 1080                    |     4 | ??         |
+
+
+### Software Modules
+On RHEL servers, many default packages are quite old. To get access to newer versions, as well as additional software packages, the cluster use
+the module package. A package can be loaded via the command
+
+    module load software/version
+    #for example for python 3.9.9:
+    module load python/3.9.9
+    python3 --version
+    # prints 3.9.9
+    
+The list of all available software modules can be seen via
+
+    module avail
+    
+The current list of modules includes modern compilers, python versions, anaconda, but also cuda and cudnn.
+Modules need to be loaded every time you login to a server, therefore it makes sense to store the commands in your `~/.bashrc`
+
+
+
 
 ### ERDA
 Go to [https://erda.dk](https://erda.dk) for access to ERDA.
 
-You can use sshfs to mount an ERDA directory. Once you have access to ERDA, create a new public/private key pair. Go to `Setup > SFTP` to add the public key to ERDA and put the private key in `~/.ssh` in your home dir on the cluster.
+You can use sshfs to mount an ERDA directory. Once you have access to ERDA, create a new public/private key pair. Go to [`Setup > SFTP`](https://erda.dk/wsgi-bin/setup.py?topic=sftp) to add the public key to ERDA and put the private key in `~/.ssh` in your home dir on the cluster. On this page you also find the login details and your erda username, which can be different from your kuid and which you need for the scripts below.
 
- Note that you need to mount ERDA directories on the machines that the job is submitted to. A simple approach is to make scripts that mounts/unmounts the ERDA directory and call it in the slurm batch script.
+Note that you need to mount ERDA directories on the machines that the job is submitted to. A simple approach is to make scripts that mounts/unmounts the ERDA directory and call it in the slurm batch script.
 
 `mount_erda.sh`
 
-    # file: mount_erda.sh
     #!/bin/bash
     key=<path-to-ssh-key>
-    user=<kuid>
+    user=<erda-username>
     erdadir=<erda-dir-to-mount>
     mnt=<mount-location>
     if [ -f "$key" ]
@@ -143,13 +131,11 @@ You can use sshfs to mount an ERDA directory. Once you have access to ERDA, crea
 
 `unmount_erda.sh`
 
-    # file: unmount_erda.sh
     #!/bin/bash
     fusermount -u <mount-point>
 
 `your-slurm-script.sh`
 
-    # file: <your-slurm-batch-script>
     #!/bin/bash
     # ...
     # ... Slurm parameters
@@ -162,20 +148,11 @@ You can use sshfs to mount an ERDA directory. Once you have access to ERDA, crea
 [https://diku-dk.github.io/wiki/slurm-sif](https://diku-dk.github.io/wiki/slurm-sif)
 
 ### Files
-Using the .ssh/config comes in handy if you want to copy your files via scp
+You can copy single files or directories using scp (safe copy):
 
-    scp -r my_file1 my_file2 my_folder/ cluster:~/Dir
+    scp -r my_file1 my_file2 my_folder/ hendrix:~/Dir
 
-This will copy my_file1 my_file2 and my_folder/ into the path /home/<kuid>/Dir/. All files in your home directory are available to all compute nodes and the gpu machines. You can also copy back simply by
-
-    scp -r cluster:~/Dir ./
-
-### sshfs
-Directories accessible from the cluster can be mounted locally on your workstation via sshfs. Assuming an appropriate ssh client configuration, mounting can be done with the following command:
-
-    sshfs compute01-diku-image:the-folder-you-want-to-mount /path-to-local-mount-point
-
-Remember to install sshfs and on macOS also osxfuse (on Yosemite this must be done via https://osxfuse.github.io/).
+Or, you can use any sftp client. 
 
 ### ssh-tunnelling-and-port-forwarding
 You can use ssh tunnelling / port forwarding to expose network services on remote servers directly on the local system.
@@ -261,21 +238,6 @@ A few words of caution:
 1. Make sure to use a unique port (i.e. potentially not port 15000)
 2. Make sure to connect to the right compute node (i.e. potentially not gpu02-diku-image)
 3. This setup is considered experimental and might need some modifications to provide a stable experience
-
-### Using a more mordern compiler
-Our operating system is RHEL 7, which by default comes with some old packages. For some packages it is possible to instead use a newer version, which is done via the scl command line tool. For example, to enable a modern set of development tools, including the compiler, run
-
-    source scl_source enable devtoolset-7
-
-This will change the default compiler in your current session to the newer gcc 7.3. If you also want this as a permanent change in your sessions, add this command to your .bash_profile.
-
-### Old Home directories on GPU
-If you have an older user account, you might miss some of your data. This data is located at
-
-    /science/home/<kuid>
-
-You can not ls or use auto-completion in /science/home/, but cd or using direct file-paths work fine.
-WARNING: YOU CAN NOT USE THIS DIRECTORY FOR LONG RUNNING JOBS! COPY THE DATA YOU NEED TO YOUR HOME DIRECTORY!
 
 ## Using Slurm
 Slurm is a Batch processing manager which allows you to submit tasks and request a specific amount of resources which have to be reserved for the job. Resources are for example Memory, number of processing cores, GPUs or even a number of machines. Moreover, Slurm allows you to start arrays of jobs easily, for example to Benchmark an algorithm with different parameter settings. When a job is submitted, it is enqueued to the waiting queue and will stay there until the required resources are available. Slurm is therefore perfectly suited for executing long-running tasks.
@@ -368,6 +330,7 @@ This suggests that you don't need more than 2 GB of memory for this job.  Altern
 This job shouldn't need more than 20 GB of RAM. Remember to add a suitable amount of RAM for shared memory (column SHR when using top). Using multiple processes makes this process even less straightforward and moves into the reign of educated guesswork.
 
 Keeping these estimates low albeit realistic increases the utilisation of our hardware, which hopefully translates into lower waiting times.
+
 
 ## Behind the Scenes
 ### Scheduling
