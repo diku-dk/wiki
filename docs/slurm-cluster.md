@@ -333,19 +333,6 @@ After submitting a job (via sbatch or srun) it enters the scheduling queue. If t
                  JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
                1894291       gpu     bash   fwc817 PD       0:00      1 (Resources)
 
-If there are enough other jobs waiting to be scheduled those jobs' priorities become relevant:
+If there are enough other jobs waiting, job starting times are ordered by [priority scheduling](https://diku-dk.github.io/wiki/slurm-scheduling) that ensures that all users have access to a similar share of the resources.
 
-    [fwc817@a00552 ~]$ sprio
-              JOBID PARTITION   PRIORITY       SITE        AGE  FAIRSHARE    JOBSIZE  PARTITION
-            1894294 gpu              314          0          0        284         20         10
-
-The most important factors which increase a job's priority are
-- Age: this favours jobs which have been waiting for resources over recently submitted ones
-- Fairshare: this inversely correlates with your account's general usage of the slurm cluster
-- Job size: larger jobs are favoured over smaller jobs so they are not blocked in the queue for too long. Don't try to abuse this as it is unfair to other users and we'd be forced to increase the weight of the Fairshare factor
-- Niceness: you can decrease your job's priority by increasing its niceness (sbatch --nice=1000). Usually it's 100, which decreases a job's priority (as seen in the output of sprio) by 100.
-
-In regular intervals all jobs' priorities are recomputed. Those with the highest priority are considered in order of decreasing priority for resources allocation. Jobs are then executed if resources for that job are available and if either
-
-1. the job under consideration has the highest priority or
-2. starting the job under consideration does not delay the expected start time (check squeue --start) of any job submitted before this job (backfill scheduling).
+Sometimes a job will not start for seemingly unknown reasons: a node might appear free, but the job is still held in queue, even though it might fit. The most likely reason is that the job is not actually free, but used by a job on a partition that is invisible to you (e.g., special priority queues for users who own a server). Another frequent reason is that a job might be able to start but not end without delaying a job with higher priority.
