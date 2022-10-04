@@ -24,15 +24,8 @@ If a job requests 10G of memory, allocating more than that will lead to an out-o
 
 GPU handling:
 
-Currently, the cluster holds the following GPU types (note that different cards are bunched together, e.g.,
-different A100 cards are all referenced as A100), which can be requested using the `--gres` switch of SBATCH:
-
-|Type|Count|Gres    |
-|----|-----|--------|
-|A40 |10   |gpu:a40 |
-|A100|14   |gpu:a100|
-
-Requesting two A100 is done via `--gres=gpu:a100:2`. The NVIDIA driver will make sure that only allocated GPUs are visible to a job. Calling `nvidia-smi`
+Currently, the cluster supports a few different gpu types, which can be requested using the `--gres` switch of SBATCH.
+The NVIDIA driver will make sure that only allocated GPUs are visible to a job. Calling `nvidia-smi`
 will only return allocated GPUs. GPU numbers will still be consecutive starting from zero, with the fastest GPU getting assigned id 0. From a user perspective,
 a system with 8 gpus with 2 GPUs allocated to a job should not look different from a system that only has 2 GPUs.
 
@@ -40,8 +33,7 @@ a system with 8 gpus with 2 GPUs allocated to a job should not look different fr
 
 By default, allocating a GPU will automatically allocate 8 CPU threads and each CPU thread will by default allocate 4000MB of memory. 
 This means, allocating a GPU leads to 8 theads and 32000MB being allocated as well. These numbers can all be changed via sbatch command options.
-However, at maximum 8000MB memory are allocated to a single core to prevent memory-starving CPUs. This means that allocating more Memory will automatically allocate more 
-CPUs to your job, which will affect the scheduling cost (see Billing Factor below).
+However, at maximum 8000MB memory are allocated to a single core to prevent memory-starving CPUs. This means that allocating more memory will automatically allocate more CPUs to your job, which will affect the scheduling cost (see [Billing Factor](#billig-factor) below).
 
 
 ## Billing factor
@@ -98,7 +90,7 @@ allocating moe than twice the default memory (`--mem=128G`) will increase the nu
     billing=25,cpu=16,gres/gpu:a100=1,gres/gpu=1,mem=128G,node=1   00:01:05
 
 ## Scheduling Priority
-Scheduling priority is computed as a sum of two values
+Scheduling priority is computed as a sum of two equally weighted values
 
 1. Job waiting factor
 2. Fairshare factor
