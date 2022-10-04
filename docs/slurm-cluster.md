@@ -19,8 +19,7 @@ Table of Contents
 * [Using Slurm](#using-slurm)
   * [Examples for BatchScripts](#examples-for-batchscripts)
     * [Minimal Example](#minimal-example)
-    * [Start an Array of Jobs using Matlab](#start-an-array-of-jobs-using-matlab)
-    * [Start a Job on the GPU cluster](#start-a-job-on-the-gpu-cluster)
+    * [Start a Job using GPU resources](#start-a-job-using-gpu-resources)
   * [Scheduling many tasks](#scheduling-many-tasks)
   * [Determining memory requirements](#determining-memory-requirements)
 * [Behind the Scenes](#behind-the-scenes)
@@ -43,14 +42,11 @@ All support requests should be by mail to cluster-support@di.ku.dk
 
 ## Basic Access and First Time Setup
 The server is accessed via a two-layer access: first you connect to the university network,
-and then you use ssh to connect to the server. To connect to the university network, either, use a direct network cable
-connection in yor office or use VPN. VPN comes pre-installed on KU-Computer and for MacOSX and Windows there are guides
+and then you use ssh to connect to the server. To connect to the university network, either use a direct network cable
+connection in your office or use VPN. VPN comes pre-installed on KU-Computer and for MacOSX and Windows there are guides
 online on [kunet](https://kunet.ku.dk/employee-guide/Pages/IT/Remote-access.aspx). For Linux, please download the fitting
 [AnyConnect Secure Mobility Client v4.x](https://software.cisco.com/download/home/283000185).
 
-
-VPN Access comes pre-installed on KU-Computer and if you
-have a direct cable connection in your office, you do not nee
 
 For the second step, you need to install and configure ssh. Put the following in your `~/.ssh/config` (Linux/MacOS) or
 in `C:/Users/YOUR_WINDOWS_USER/.ssh/config` (Windows, a simple text file with no file ending!):
@@ -66,8 +62,7 @@ With this in place, you can open a terminal (cmd or PowerShell in Windows) and r
 
     ssh hendrix
     
-This will connect you to a (random) gateway server. Gateway servers are small, relatively weak virtual machines and each time you login, you can be connected to a different
-server. As a normal use, you are not able to connect to the compute servers directly. Gateway servers allow you to compile programs or run small evaluation scripts, but anything that requires real compute power must be run on the compute servers via slurm. 
+This will connect you to a (random) gateway server. Gateway servers are small, relatively weak virtual machines and each time you login, you can be connected to a different server. As a normal use, you are not able to connect to the compute servers directly. Gateway servers allow you to compile programs or run small evaluation scripts, but anything that requires real compute power must be run on the compute servers via slurm. 
 
 ## General Information
 
@@ -104,13 +99,10 @@ The list of all available software modules can be seen via
 The current list of modules includes modern compilers, python versions, anaconda, but also cuda and cudnn.
 Modules need to be loaded every time you login to a server, therefore it makes sense to store the commands in your `~/.bashrc`
 
-
-
-
 ### ERDA
 Go to [https://erda.dk](https://erda.dk) for access to ERDA.
 
-You can use sshfs to mount an ERDA directory. Once you have access to ERDA, create a new public/private key pair. Go to [`Setup > SFTP`](https://erda.dk/wsgi-bin/setup.py?topic=sftp) to add the public key to ERDA and put the private key in `~/.ssh` in your home dir on the cluster. On this page you also find the login details and your erda username, which can be different from your kuid and which you need for the scripts below.
+You can use sshfs to mount an ERDA directory. Once you have access to ERDA, create a new public/private key pair. Go to [Setup > SFTP](https://erda.dk/wsgi-bin/setup.py?topic=sftp) to add the public key to ERDA and put the private key in `~/.ssh` in your home dir on the cluster. On this page you also find the login details and your erda username, which can be different from your kuid and which you need for the scripts below.
 
 Note that you need to mount ERDA directories on the machines that the job is submitted to. A simple approach is to make scripts that mounts/unmounts the ERDA directory and call it in the slurm batch script.
 
@@ -148,13 +140,15 @@ Note that you need to mount ERDA directories on the machines that the job is sub
 [https://diku-dk.github.io/wiki/slurm-sif](https://diku-dk.github.io/wiki/slurm-sif)
 
 ### Files
-You can copy single files or directories using scp (safe copy):
+Once you are in the university network (cable or VPN, see [Getting Access](#getting-access)), you can copy single files or directories using scp (safe copy):
 
     scp -r my_file1 my_file2 my_folder/ hendrix:~/Dir
 
 Or, you can use any sftp client. 
 
 ### ssh-tunnelling-and-port-forwarding
+(Todo: this is not updated for hendrix. likely some of the details won't work)
+
 You can use ssh tunnelling / port forwarding to expose network services on remote servers directly on the local system.
 
 For example,
@@ -260,6 +254,8 @@ This means that storing files relative to your current path will work flawlessly
 A quite minimal script looks like:
 
     #!/bin/bash
+    #The partition is the queue you want to run on. standard is gpu and can be ommitted.
+    #SBATCH -p gpu
     #SBATCH --job-name=MyJob
     #number of independent tasks we are going to start in this script
     #SBATCH --ntasks=1
@@ -274,27 +270,9 @@ A quite minimal script looks like:
     ./my_program option1 option2 option3
     ./some_post_processing
 
-#### Start an Array of Jobs using Matlab
-This is a another small script to start an array of several independent jobs using Matlab. The script assumes that in the current folder there
-is a function called "myMatlabScript" which is taking the task number as a single argument. Internally the function will then assign the chosen hyper parameters based on
-the task number, e.g. by using it as an index in an array and then run the experiment.
-Please take care that every task number saves the results in different files, otherwise the processes will overwrite each other.
-In the script the number of cores is restricted to 4 for each task in the array, so the total script takes 28 cpres
-
-    #!/bin/bash
-    #SBATCH --job-name=ArrayMatlab
-    # we start 7 tasks numbered 1-7
-    #SBATCH --array 1-7
-    #number of cpus we want to allocate for each task
-    #SBATCH --cpus-per-task=4
-    # max run time is 24 hours
-    #SBATCH --time= 24:00:00
-    # start matlab
-    matlab -minimize -nosplash -nodesktop -r "myMatlabScript(${SLURM_ARRAY_TASK_ID})"
-
-#### Start a Job on the GPU cluster
-Asking for gpu resources requires running on the partition gpu and indicating which and how many gpus you need. the format is either --gres=gpu:number, e.g. --gres=gpu:2 or a specific gpu type like
---gres=gpu:titanx:2. An example script could look like
+#### Start a Job using GPU resources
+Asking for gpu resources requires indicating which and how many gpus you need. the format is either --gres=gpu:number, e.g. --gres=gpu:2 or a specific gpu type like
+--gres=gpu:titanx:2. The types of GPUs supported and their amount of memory available are given [in this table](#available-gpus). An example script could look like
 
     #!/bin/bash
     # normal cpu stuff: allocate cpus, memory
@@ -311,7 +289,22 @@ Asking for gpu resources requires running on the partition gpu and indicating wh
     python3 yourScript.py
 
 ### Scheduling many tasks
-Please take a look at [job arrays](https://slurm.schedmd.com/job_array.html).  Job arrays are preferred to multiple jobs when you have a lot of tasks with the same requirements. They are easier on the scheduler, which does not need to attempt to schedule all tasks at the same time, but only a small subset.  You can also use job arrays to limit the number of jobs run at the same time.  This allows other users to use our cluster without having to wait.
+Please take a look at [job arrays](https://slurm.schedmd.com/job_array.html) when scheduling many similar tasks. Job arrays are preferred to multiple jobs when you have a lot of tasks with the same requirements. They are easier on the scheduler, which does not need to attempt to schedule all tasks at the same time, but only a small subset.  You can also use job arrays to limit the number of jobs run at the same time.  This allows other users to use our cluster without having to wait.
+
+Implementing a job array is easy, as slurm provides an environment variable `${SLURM_ARRAY_TASK_ID}` that indicates the id of the job that is run. This can be supplied as additional program argument, for example to index an array of hyper parameters in your scripts.
+In the script the number of cores is restricted to 4 for each task in the array, so the total script uses 28 cpus
+
+    #!/bin/bash
+    #SBATCH --job-name=ArrayMatlab
+    # we start 7 tasks numbered 1-7 but only 3 can run in parallel
+    #SBATCH --array 1-7%3
+    #number of cpus we want to allocate for each task
+    #SBATCH --cpus-per-task=4
+    # max run time is 24 hours
+    #SBATCH --time= 24:00:00
+    
+    python experiment.py ${SLURM_ARRAY_TASK_ID}
+
 
 ### Determining memory requirements
 Before running multiple jobs with high memory requirements consider running just one to see how much memory you need. Useful commands are /usr/bin/time (run like /usr/bin/time -v python my_script.py --my_param 42)
