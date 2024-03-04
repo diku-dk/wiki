@@ -338,4 +338,5 @@ If there are enough other jobs waiting, job starting times are ordered by [prior
 
 Sometimes a job will not start for seemingly unknown reasons: a node might appear free, but the job is still held in queue, even though it might fit. The most likely reason is that the job is not actually free, but used by a job on a partition that is invisible to you (e.g., special priority queues for users who own a server). Another frequent reason is that a job might be able to start but not end without delaying a job with higher priority.
 
-##faq
+## faq
+This section will be a collection of frequently asked questions. Please refer to these before asking questions directly to the cluster-support mail. your question might already have been answered
