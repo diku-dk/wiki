@@ -24,6 +24,7 @@ Table of Contents
   * [Determining memory requirements](#determining-memory-requirements)
 * [Behind the Scenes](#behind-the-scenes)
   * [Scheduling](#scheduling)
+* [FAQ](#faq)
 
 
 ## Getting access
@@ -62,13 +63,13 @@ With this in place, you can open a terminal (cmd or PowerShell in Windows) and r
 
     ssh hendrix
 
-This will connect you to a (random) gateway server. Gateway servers are small, relatively weak virtual machines and each time you login, you can be connected to a different server. As a normal use, you are not able to connect to the compute servers directly. Gateway servers allow you to compile programs or run small evaluation scripts, but anything that requires real compute power must be run on the compute servers via slurm.
+This will connect you to a (random) gateway server. Gateway servers are small, relatively weak virtual machines and each time you login, you can be connected to a different server. As a normal use, you are not able to connect to the compute servers directly. Gateway servers allow you to compile programs or run small evaluation scripts, but anything that requires real compute power must be run on the compute servers via slurm. We have had issues with people running VSCode on the gateservers. They are not dimensioned to be able to cope with the sloppy memory demands of VScode and we strongly discourage this. We are working on getting a larger gateserver specifically dimensioned to run more demanding stuff, but this is not yet a reality.
 
 ## General Information
 
 ### Available GPUs
 
-The cluster currently hosts one main partition with the following GPU cards(TODO!):
+The cluster currently hosts one main partition with the following GPU cards:
 
 
 | Resource-Name   | Model                       | Count | Memory(GB) |
@@ -325,6 +326,7 @@ Keeping these estimates low albeit realistic increases the utilisation of our ha
 
 
 ## Behind the Scenes
+Have you ever wondered why your job is not getting GPU time? a lot of stuff is going on behind the scenes and not everything is visible to all users. this section tries to give you some insights to help you understand how the cluster works.
 ### Scheduling
 After submitting a job (via sbatch or srun) it enters the scheduling queue. If there are no other jobs waiting it will reside there until enough resources (i.e. a node which satisfies the requested resources, including GPUs, CPU core count, and memory) are available. Until then it will show up in the scheduling queue like this:
 
@@ -335,3 +337,5 @@ After submitting a job (via sbatch or srun) it enters the scheduling queue. If t
 If there are enough other jobs waiting, job starting times are ordered by [priority scheduling](https://diku-dk.github.io/wiki/slurm-scheduling) that ensures that all users have access to a similar share of the resources.
 
 Sometimes a job will not start for seemingly unknown reasons: a node might appear free, but the job is still held in queue, even though it might fit. The most likely reason is that the job is not actually free, but used by a job on a partition that is invisible to you (e.g., special priority queues for users who own a server). Another frequent reason is that a job might be able to start but not end without delaying a job with higher priority.
+
+##faq
