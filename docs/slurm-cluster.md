@@ -61,8 +61,8 @@ in `C:/Users/YOUR_WINDOWS_USER/.ssh/config` (Windows, a simple text file with no
 With this in place, you can open a terminal (cmd or PowerShell in Windows) and run
 
     ssh hendrix
-    
-This will connect you to a (random) gateway server. Gateway servers are small, relatively weak virtual machines and each time you login, you can be connected to a different server. As a normal use, you are not able to connect to the compute servers directly. Gateway servers allow you to compile programs or run small evaluation scripts, but anything that requires real compute power must be run on the compute servers via slurm. 
+
+This will connect you to a (random) gateway server. Gateway servers are small, relatively weak virtual machines and each time you login, you can be connected to a different server. As a normal use, you are not able to connect to the compute servers directly. Gateway servers allow you to compile programs or run small evaluation scripts, but anything that requires real compute power must be run on the compute servers via slurm.
 
 ## General Information
 
@@ -73,13 +73,12 @@ The cluster currently hosts one main partition with the following GPU cards(TODO
 
 | Resource-Name   | Model                       | Count | Memory(GB) |
 |-----------------|-----------------------------|-------|----------- |
-| A100            | Nvidia A100                 |    14 | 40         |
-| A40             | Nvidia A40                  |    10 | 40         |
-| titanrtx        | Titan RTX + Quadro RTX 6000 |    48 | ??         |
-| titanx          | Titan X/Xp/V                |    24 | ??         |
-| testlak40       | Tesla K40                   |     2 | ??         |
-| testlak20       | Tesla K20                   |     1 | ??         |
-| gtx1080         | GTX 1080                    |     4 | ??         |
+| H100            | Nvidia H100                 |     4 | 80         |
+| A100            | Nvidia A100                 |    26 | 80/40      |
+| A40             | Nvidia A40                  |    14 | 40         |
+| titanrtx        | Titan RTX + Quadro RTX 6000 |    55 | ??         |
+| titanx          | Titan X/Xp/V                |    15 | ??         |
+
 
 
 ### Software Modules
@@ -91,11 +90,11 @@ the module package. A package can be loaded via the command
     module load python/3.9.9
     python3 --version
     # prints 3.9.9
-    
+
 The list of all available software modules can be seen via
 
     module avail
-    
+
 The current list of modules includes modern compilers, python versions, anaconda, but also cuda and cudnn.
 Modules need to be loaded every time you login to a server, therefore it makes sense to store the commands in your `~/.bashrc`
 
@@ -116,7 +115,7 @@ Note that you need to mount ERDA directories on the machines that the job is sub
     if [ -f "$key" ]
     then
         mkdir -p ${mnt}
-        sshfs ${user}@io.erda.dk:${erdadir} ${mnt} -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3 -o IdentityFile=${key} 
+        sshfs ${user}@io.erda.dk:${erdadir} ${mnt} -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3 -o IdentityFile=${key}
     else
         echo "'${key}' is not an ssh key"
     fi
@@ -144,7 +143,7 @@ Once you are in the university network (cable or VPN, see [Getting Access](#gett
 
     scp -r my_file1 my_file2 my_folder/ hendrix:~/Dir
 
-Or, you can use any sftp client. 
+Or, you can use any sftp client.
 
 ### ssh-tunnelling-and-port-forwarding
 (Todo: this is not updated for hendrix. likely some of the details won't work)
@@ -194,7 +193,7 @@ This can also be used to run interactive jupyter notebooks. We can launch an int
     [I 12:27:30.597 NotebookApp]  or http://127.0.0.1:15000/?token=d305ab86adaf9c96bf4e44611c2253a1c7da6ec9e61557c4
     [I 12:27:30.597 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
     [C 12:27:30.614 NotebookApp]
-    
+
         To access the notebook, open this file in a browser:
             file:///home/xyz123/.local/share/jupyter/runtime/nbserver-5918-open.html
         Or copy and paste one of these URLs:
@@ -204,7 +203,7 @@ This can also be used to run interactive jupyter notebooks. We can launch an int
 The jupyter server is now running. To connect to it using the browser on your local machine you need use local port forwarding and connect to the correct compute node (e.g. gpu02-diku-image in our example):
 
     localuser@localmachine> ssh -N -L 15000:127.0.0.1:15000 gpu02-diku-image
-    xyz123@ssh-diku-image.science.ku.dk's password: 
+    xyz123@ssh-diku-image.science.ku.dk's password:
 
 While this connection persists in the background we can access the jupyter server using the URL from above:
 
@@ -225,7 +224,7 @@ Remember to shut down the jupyter server once you are done and exit your login s
     [I 12:44:25.233 NotebookApp] Shutting down 0 terminals
     (my_tf_env) [xyz123@gpu02-diku-image ~]$ exit
     exit
-    [xyz123@a00552 ~]$ 
+    [xyz123@a00552 ~]$
 
 A few words of caution:
 
@@ -302,7 +301,7 @@ In the script the number of cores is restricted to 4 for each task in the array,
     #SBATCH --cpus-per-task=4
     # max run time is 24 hours
     #SBATCH --time= 24:00:00
-    
+
     python experiment.py ${SLURM_ARRAY_TASK_ID}
 
 

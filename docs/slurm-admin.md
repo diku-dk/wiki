@@ -1,4 +1,4 @@
-# Slurm admin
+  # Slurm admin
 
 Table of Contents
 =================
@@ -42,7 +42,7 @@ After a crashed node got rebooted, Slurm will not trust it anymore, querying sta
     $ sudo scontrol show node a00562
     NodeName=a00562 Arch=x86_64 CoresPerSocket=10
        ...
-       State=DOWN 
+       State=DOWN
        ...
        Reason=Node unexpectedly rebooted
 
@@ -66,7 +66,7 @@ When the machines get rebooted, the slurm daemons will also come up automaticall
 
 ## Setup
 
-How to build (strg+f rpm) https://slurm.schedmd.com/quickstart_admin.html 
+How to build (strg+f rpm) https://slurm.schedmd.com/quickstart_admin.html
 Use the rpmbuild option!
 Install mariadb-devel so we can build slurmdbd with database accounting
 On a compute node we need
@@ -84,6 +84,8 @@ There are scripts for installing and upgrading slurm in the github repo.
 1. Create <server-name>-gres.conf file
 2. Set paths in `install_slurm.gpu.sh`
 3. `./install.slurm.gpu.sh <server-name>`
+
+this have changed TODO get fixed so it is updated
 
 
 ## Install slurm on cpu node
@@ -107,7 +109,7 @@ Build the new slurm packages. There are upgrade scripts in the githun repo.
 2. `./upgrade_slurm.sh`
 
 ## Usage stats
-Use `sreport` and `sacct`. 
+Use `sreport` and `sacct`.
 
 ### Calculate median wait time
 Use `sacct` to get stats for 2020
