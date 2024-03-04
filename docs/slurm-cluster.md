@@ -24,7 +24,7 @@ Table of Contents
   * [Determining memory requirements](#determining-memory-requirements)
 * [Behind the Scenes](#behind-the-scenes)
   * [Scheduling](#scheduling)
-* [FAQ](#faq)
+* [Frequently asked questions](#faq)
 
 
 ## Getting access
