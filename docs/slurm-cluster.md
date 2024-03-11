@@ -340,21 +340,22 @@ Sometimes a job will not start for seemingly unknown reasons: a node might appea
 
 ## Frequently asked questions
 This section will be a collection of frequently asked questions. Please refer to these before asking questions directly to the cluster-support mail. your question might already have been answered
-####Q :  
+
+#### Q:  
 I get " connection closed by 10.84.3.168 port 22" (or some similar IP)?
 
-####A :
+#### A:
 Sometimes people loose access to the cluster because they chance their affiliation or renew their contract. Unfortunately we, the admin team, don't get any notification when this happens and therefore we rely on your input as users. there are two things you can do to make this go smoother. If you know there is such a change coming up for you, notify us as soon as the change is effective so we can readd you as fast as possible. otherwise as soon as you notice this send a mail to cluster support with the error message
 
-####Q :
+#### Q:
 Why do the nodes go down?
 
-####A : 
+#### A:
 the cluster runs 24/7 and the nodes, like any computer used for development, sometimes experience software or hardware failures. we check the nodes almost every day, and get them up and running again as fast as possible. Sometimes we have to wait for help from KU-IT (usually in the case of hardware failures) and sometimes we have to wait for running jobs to exit before we can reboot a node.
 
-####Q :
+#### Q:
 Why are nodes Draining for so long?
 
-####A :
+#### A:
 
 When a node is Draining (I.E. it does not accept new jobs) it is usually (9 of 10 cases) because a previous job have exited badly. this can happen for many reasons such as bugs in the scripts run, that cause memory leaks or just bad luck. when this happens there may still be other jobs running on the node, and while the zombie-job might cause a drain the other jobs on the node is allowed to terminate before the node can be rebooted. Our policy is that we always allow healthy jobs to terminate on  draining nodes if possible. This may result in nodes draining for hours or even days, but the alternative is that users would se their healthy jobs terminated for no obvious reason.
