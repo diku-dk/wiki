@@ -30,8 +30,8 @@ Table of Contents
 ## Getting access
 1. Request "SRV-hendrixgate-users" through identity.ku.dk
 2.  * Employees should send a mail to cluster-access@di.ku.dk
-    * Students should have their supervisor send a mail to cluster-access@di.ku.dk
-
+    * Students should have their supervisor send a mail to cluster-access@di.ku.dk, or cc their supervisor for confirmation that they need cluster access.
+    * whether you are a student or an employee, you should include your ku-id in the mail as well as your research section affiliation (students should write student). this drastically reduced the time it will take to get access.
 
 ### External guests
 Access to the cluster infrastructure requires an active account. Access for external guests can be requested by a KU employee via https://identity.ku.dk/ -> "Menu button" -> "Manage Identity" -> "Create external guest". Make sure that the checkbox next to "Science guest" is ticked. The guest user must then follow the instructions outlined in the e-mail they receive. Afterwards they can request the required role via "https://identity-guest.ku.dk/identityiq/login.jsf" -> Login -> "Manage My Access" -> Search -> Select check button next to "SRV-hendrixgate-users" -> Next -> Submit. Afterwards the KU employee should send an e-mail to cluster-access@di.ku.dk including the external guest's e-mail address as well as their name or user id. Once the external guest receives our welcome e-mail they should follow the steps below.
