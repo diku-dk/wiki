@@ -24,6 +24,7 @@ Table of Contents
   * [Determining memory requirements](#determining-memory-requirements)
 * [Behind the Scenes](#behind-the-scenes)
   * [Scheduling](#scheduling)
+  * [Cluster Usage](#clusterusage)
 * [Frequently asked questions](#frequently-asked-questions)
 
 
@@ -177,7 +178,7 @@ you can checkout the remote repository on repo_server using
 
 Once you are done, you can close the tunnel using Ctrl-C.
 
-This can also be used to run interactive jupyter notebooks. 
+This can also be used to run interactive jupyter notebooks.
 See [Jupyter Notebooks](slurm-jupyter.md)
 
 
@@ -285,6 +286,12 @@ After submitting a job (via sbatch or srun) it enters the scheduling queue. If t
 If there are enough other jobs waiting, job starting times are ordered by [priority scheduling](https://diku-dk.github.io/wiki/slurm-scheduling) that ensures that all users have access to a similar share of the resources.
 
 Sometimes a job will not start for seemingly unknown reasons: a node might appear free, but the job is still held in queue, even though it might fit. The most likely reason is that the job is not actually free, but used by a job on a partition that is invisible to you (e.g., special priority queues for users who own a server). Another frequent reason is that a job might be able to start but not end without delaying a job with higher priority.
+
+### Cluster Usage
+There are numerous ways to visualise the usage of the cluster. Most of them are available to all users and can be accessed using the sacct sacctmgr and scontrol slurm commands. to get a quick overview of the usage of the cluster it might be a bit much though so the following are a few visualisation of the usage of the cluster. theey will be updated on a quarterly basis so dont expect thsi to be super updated:
+the cluster is shared between the different research sections and the following is a visualisation of the percentagevize usage between the sections :
+
+![alt text](images/clusterusebysection24.png "clusteruse by sections") 
 
 ## Frequently asked questions
 This section will be a collection of frequently asked questions. Please refer to these before asking questions directly to the cluster-support mail. your question might already have been answered
