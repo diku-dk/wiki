@@ -24,7 +24,7 @@ Table of Contents
   * [Determining memory requirements](#determining-memory-requirements)
 * [Behind the Scenes](#behind-the-scenes)
   * [Scheduling](#scheduling)
-  * [Cluster Usage](#clusterusage)
+  * [Cluster Usage](#cluster-usage)
 * [Frequently asked questions](#frequently-asked-questions)
 
 
@@ -59,6 +59,10 @@ in `C:/Users/YOUR_WINDOWS_USER/.ssh/config` (Windows, a simple text file with no
         StrictHostKeyChecking no
         CheckHostIP no
         UserKnownHostsFile=/dev/null
+
+Windows users should be aware that sometimes it wont work unless you have the qualified domain name I.E. you should write :
+
+    Hostname hendrixgate.unicph.domain
 
 With this in place, you can open a terminal (cmd or PowerShell in Windows) and run
 
@@ -289,9 +293,11 @@ Sometimes a job will not start for seemingly unknown reasons: a node might appea
 
 ### Cluster Usage
 There are numerous ways to visualise the usage of the cluster. Most of them are available to all users and can be accessed using the sacct sacctmgr and scontrol slurm commands. to get a quick overview of the usage of the cluster it might be a bit much though so the following are a few visualisation of the usage of the cluster. theey will be updated on a quarterly basis so dont expect thsi to be super updated:
-the cluster is shared between the different research sections and the following is a visualisation of the percentagevize usage between the sections :
+the cluster is shared between the different research sections and the following is a visualisation of the percentagevize usage between the sections from january 2024 to july 2024 :
 
-![alt text](images/clusterusebysection24.png "clusteruse by sections") 
+![alt text](images/clusterusebysection24.png "clusteruse by sections")
+
+Students has been included as a separate column since the cluster is also a teaching resource and many thesis students participate in research projects.
 
 ## Frequently asked questions
 This section will be a collection of frequently asked questions. Please refer to these before asking questions directly to the cluster-support mail. your question might already have been answered
