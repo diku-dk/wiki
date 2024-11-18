@@ -149,7 +149,18 @@ Once you are in the university network (cable or VPN, see [Getting Access](#gett
 
     scp -r my_file1 my_file2 my_folder/ hendrix:~/Dir
 
-Or, you can use any sftp client.
+Or, you can use any sftp client. It is also possible to mount your hendrix home directory on your local machine for easy copying and editing of files. 
+
+Unix users can simply use sshfs (note that the full path to your home dir is important! '~' or '$HOME' will not work!)
+
+    sshfs xyz123@hendrix:/home/xyz123/ <target_directory>
+ 
+On Windows however you will have to download and install [WinFsp and SSHFS-Win](https://github.com/winfsp/sshfs-win)  Then in your Windows file manager open the Map network drive wizard and enter 
+ 
+    \\sshfs\xyz123@hendrixgate.unicph.domain
+ 
+in the Folder field and click Finish. It will prompt you for your password. Note that here you do not need to specify your home dir path, but adding '.unicph.domain' is important!
+
 
 ### ssh-tunnelling-and-port-forwarding
 (Todo: this is not updated for hendrix. likely some of the details won't work)
