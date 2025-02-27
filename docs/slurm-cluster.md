@@ -10,6 +10,7 @@ Table of Contents
 * [Support](#support)
 * [Basic Access and First Time Setup](#basic-access-and-first-time-setup)
 * [General Information](#general-information)
+  * [Limits](#limits)
   * [Available GPUs](#available-gpus)
   * [Software Modules](#software-modules)
   * [ERDA](#erda)
@@ -71,6 +72,14 @@ With this in place, you can open a terminal (cmd or PowerShell in Windows) and r
 This will connect you to a (random) gateway server. Gateway servers are small, relatively weak virtual machines and each time you login, you can be connected to a different server. As a normal use, you are not able to connect to the compute servers directly. Gateway servers allow you to compile programs or run small evaluation scripts, but anything that requires real compute power must be run on the compute servers via slurm. We have had issues with people running VSCode on the gateservers. They are not dimensioned to be able to cope with the sloppy memory demands of VScode and we strongly discourage this. We are working on getting a larger gateserver specifically dimensioned to run more demanding stuff, but this is not yet a reality.
 
 ## General Information
+
+### Limits
+
+There are a few limits, decided by the cluster usergroup and enforced by the system which it may be helpfull to be aware of
+
+1. there is a limit of 8 gpus per user, which means that any jobs exceeding this limit will be rejected at queue time
+2. the default timelimit for a job is 5 hours, which means that any job that does not have an explicit timelimit will terminate after 5 hours regardless if the job has finished.
+3. there is a max timelimit for a job of 48 hours. this means that all jobs will terminate after 48 hours regardless if the job has finished.
 
 ### Available GPUs
 
@@ -149,16 +158,16 @@ Once you are in the university network (cable or VPN, see [Getting Access](#gett
 
     scp -r my_file1 my_file2 my_folder/ hendrix:~/Dir
 
-Or, you can use any sftp client. It is also possible to mount your hendrix home directory on your local machine for easy copying and editing of files. 
+Or, you can use any sftp client. It is also possible to mount your hendrix home directory on your local machine for easy copying and editing of files.
 
 Unix users can simply use sshfs (note that the full path to your home dir is important! '~' or '$HOME' will not work!)
 
     sshfs xyz123@hendrix:/home/xyz123/ <target_directory>
- 
-On Windows however you will have to download and install [WinFsp and SSHFS-Win](https://github.com/winfsp/sshfs-win)  Then in your Windows file manager open the Map network drive wizard and enter 
- 
+
+On Windows however you will have to download and install [WinFsp and SSHFS-Win](https://github.com/winfsp/sshfs-win)  Then in your Windows file manager open the Map network drive wizard and enter
+
     \\sshfs\xyz123@hendrixgate.unicph.domain
- 
+
 in the Folder field and click Finish. It will prompt you for your password. Note that here you do not need to specify your home dir path, but adding '.unicph.domain' is important!
 
 

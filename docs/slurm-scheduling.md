@@ -1,7 +1,7 @@
 # Scheduling and Resource Allocation
 
 ## About
-This document describes how the cluster currently handles ressource allocations and how jobs are scheduled. 
+This document describes how the cluster currently handles ressource allocations and how jobs are scheduled.
 
 1. [Resource Allocation](#resource-allocation)
 2. [Billing Factor](#billing-factor)
@@ -11,7 +11,7 @@ This document describes how the cluster currently handles ressource allocations 
 The cluster schedules three resources: CPU threads, Memory and GPUs. The requested resources are guarded via cgroups: a job can allocate only as many
 resources as requested and can not access any other resources.
 
-CPU threads are not cores: 
+CPU threads are not cores:
 each core offers two hyperthreads, which share the compute power of the core. When allocating jobs,
 SLURM is configured to never allocate two different jobs on the same CPU core and when requesting more than one CPU,
 slurm will by default try to minimize the allocated number of cores, i.e., when allocating 20 CPUs, you will receive 10 cores.
@@ -20,7 +20,7 @@ is fast and sharing the same L3 cache is possible.
 
 Memory allocation is strict:
 
-If a job requests 10G of memory, allocating more than that will lead to an out-of-memory error and the job is killed. 
+If a job requests 10G of memory, allocating more than that will lead to an out-of-memory error and the job is killed.
 
 GPU handling:
 
@@ -31,9 +31,9 @@ a system with 8 gpus with 2 GPUs allocated to a job should not look different fr
 
 ### Job Resource Defaults
 
-By default, allocating a GPU will automatically allocate 8 CPU threads and each CPU thread will by default allocate 4000MB of memory. 
+By default, allocating a GPU will automatically allocate 8 CPU threads and each CPU thread will by default allocate 4000MB of memory.
 This means, allocating a GPU leads to 8 theads and 32000MB being allocated as well. These numbers can all be changed via sbatch command options.
-However, at maximum 8000MB memory are allocated to a single core to prevent memory-starving CPUs. This means that allocating more memory will automatically allocate more CPUs to your job, which will affect the scheduling cost (see [Billing Factor](#billig-factor) below).
+However, at maximum 8000MB memory are allocated to a single core to prevent memory-starving CPUs. This means that allocating more memory will automatically allocate more CPUs to your job, which will affect the scheduling cost (see [Billing Factor](#billing-factor) below).
 
 
 ## Billing factor
@@ -54,10 +54,10 @@ The current weight factors are:
 |$\alpha$|0.625|5|10|
 
 Just requesting an arbitrary GPU incures a billing factor of 5. This GPU might be an A100, but also one of our smaller cards. If an A100 is explicitely requested,
-this incurs an additional cost on your job and the resulting cost of an a100 is 15. You can query the billing factor of a job with 
+this incurs an additional cost on your job and the resulting cost of an a100 is 15. You can query the billing factor of a job with
 
     sacct -X --format=AllocTRES%60,Elapsed -j $jobid
-    
+
 
 ### Examples
 Using the default values, requesting an arbirary GPU using `--gres=gpu:1` also allocates 8 CPUs to your job, which incurs a billing factor of:
@@ -70,7 +70,7 @@ The output of `sacct` for a job with jobid 59 with `--gres=gpu:1` produces
                                                    AllocTRES    Elapsed
        ----------------------------------------------------- ----------
                 billing=10,cpu=8,gres/gpu=1,mem=32000M,node=1   00:01:16
-                
+
 Changing the request resources to `--gres=gpu:a100:1` results in:
 
 $$F_\text{billing} = 0.625\cdot8+5+10=20$$
@@ -111,4 +111,3 @@ The four values are:
 2. NormUsage: the fraction of billing seconds compared to the overall use of the cluster
 3. NormShares: the users target share of the overall available computation time
 4. FairShare: a weight assigned based on the rank of the user in terms of NormUsage. Higher usage give lower FairShare. Maximum is 1.
-
