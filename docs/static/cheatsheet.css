@@ -1,0 +1,368 @@
+:root {
+  --bg: #f5f5f9;
+  --fg: #111827;
+  --accent: #4c1d95;
+  --accent-light: #ede9fe;
+  --border: #d4d4dd;
+  --muted: #4b5563;
+  --code-bg: #111827;
+  --code-fg: #e5e7eb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  background: #e5e7eb;
+  color: var(--fg);
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
+}
+
+.page {
+  background: white;
+  width: 210mm;
+  height: 297mm;
+  /* Fixed A4 size: 210mm x 297mm */
+  padding: 18mm 15mm 15mm;
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.05),
+    0 18px 40px rgba(15, 23, 42, 0.15);
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 15mm;
+  box-sizing: border-box;
+}
+
+.page:last-child {
+  margin-bottom: 0;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 3px solid var(--accent);
+  padding-bottom: 0.6rem;
+  margin-bottom: 1rem;
+  page-break-after: avoid;
+  background: linear-gradient(to bottom, rgba(76, 29, 149, 0.02), transparent);
+  padding-top: 0.2rem;
+  border-radius: 4px 4px 0 0;
+}
+
+header .title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+header .subtitle {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+header .meta {
+  text-align: right;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.lead {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-bottom: 0.7rem;
+}
+
+.lead a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.lead a:hover {
+  text-decoration: underline;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  font-size: 0.78rem;
+  line-height: 1.3;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.columns > div {
+  min-width: 0;
+  min-height: 0;
+  overflow-wrap: break-word;
+}
+
+.columns > div:empty {
+  min-height: 0;
+  display: block;
+}
+
+.section-header {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 1.2rem 0 0.6rem;
+  padding: 0.4rem 0.6rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--accent);
+  background: linear-gradient(to right, var(--accent-light), transparent);
+  border-radius: 4px 4px 0 0;
+  page-break-before: always;
+  page-break-after: avoid;
+  position: relative;
+}
+
+.section-header::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--accent);
+  border-radius: 2px 0 0 2px;
+}
+
+.section-header:first-of-type {
+  margin-top: 0;
+  page-break-before: auto;
+}
+
+h2 {
+  font-size: 0.95rem;
+  margin: 0 0 0.15rem;
+  color: var(--accent);
+}
+
+h3 {
+  font-size: 0.8rem;
+  margin: 0.3rem 0 0.1rem;
+  color: var(--fg);
+}
+
+p {
+  margin: 0.15rem 0;
+}
+
+ul {
+  margin: 0.15rem 0 0.25rem 1.1rem;
+  padding: 0;
+}
+
+li {
+  margin: 0.05rem 0;
+}
+
+.box {
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.55rem;
+  background: var(--bg);
+  break-inside: avoid;
+  page-break-inside: avoid;
+  page-break-before: auto;
+  page-break-after: auto;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease;
+}
+
+.box:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.box--accent {
+  background: linear-gradient(135deg, var(--accent-light) 0%, #f3f4f6 100%);
+  border-color: var(--accent);
+  border-width: 1.5px;
+}
+
+.box + .box {
+  margin-top: 0.35rem;
+}
+
+code, pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+}
+
+pre {
+  margin: 0.25rem 0;
+  padding: 0.4rem 0.5rem;
+  border-radius: 4px;
+  background: var(--code-bg);
+  color: var(--code-fg);
+  font-size: 0.72rem;
+  overflow-x: auto;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  max-width: 100%;
+  border-left: 3px solid rgba(229, 231, 235, 0.3);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+code.inline {
+  padding: 0.05rem 0.2rem;
+  border-radius: 3px;
+  background: #e5e7eb;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0.2rem 0 0.25rem;
+  font-size: 0.7rem;
+  table-layout: fixed;
+  word-wrap: break-word;
+}
+
+table th, table td {
+  border: 1px solid var(--border);
+  padding: 0.16rem 0.3rem;
+  text-align: left;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+table th {
+  background: linear-gradient(to bottom, #eef2ff, #e0e7ff);
+  font-weight: 600;
+  border-bottom: 2px solid var(--accent);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.note {
+  font-size: 0.7rem;
+  color: var(--muted);
+  margin-top: 0.15rem;
+}
+
+.footer-note {
+  margin-top: 0.5rem;
+  font-size: 0.7rem;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  padding-top: 0.25rem;
+}
+
+/* Print styles */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
+  }
+
+  body {
+    padding: 0;
+    background: white;
+  }
+
+  .page {
+    box-shadow: none;
+    border-radius: 0;
+    padding: 18mm 15mm 15mm;
+    width: 210mm;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    overflow: visible;
+    margin-bottom: 0;
+    page-break-before: auto;
+    /* A4 content area: 297mm - 20mm margins = 277mm */
+  }
+
+  .page:nth-child(1),
+  .page:nth-child(2) {
+    page-break-after: always;
+  }
+
+  .page:last-child {
+    page-break-after: auto;
+  }
+
+  .columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+    orphans: 2;
+    widows: 2;
+  }
+
+  .box {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    /* Boxes can break before/after but never inside */
+    page-break-before: auto;
+    page-break-after: auto;
+    orphans: 2;
+    widows: 2;
+  }
+
+  /* Prevent headers from being orphaned */
+  header {
+    page-break-after: avoid;
+  }
+
+  .section-header {
+    page-break-after: avoid;
+    margin-top: 0.5rem;
+  }
+
+  /* Only force page break before section headers if they're not the first on a page */
+  .page > section .section-header:first-of-type {
+    page-break-before: auto;
+  }
+
+  h2 {
+    page-break-after: avoid;
+    page-break-inside: avoid;
+  }
+
+  h3 {
+    page-break-after: avoid;
+  }
+
+  /* Prevent tables from breaking awkwardly */
+  table {
+    page-break-inside: avoid;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+}
+
+/* Narrow screens: single column (screen only, not print) */
+@media screen and (max-width: 900px) {
+  .page {
+    padding: 1rem;
+  }
+
+  .columns {
+    grid-template-columns: 1fr;
+  }
+}
+

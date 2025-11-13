@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hendrix cheat sheet</title>
+  <link rel="stylesheet" href="cheatsheet.css" />
+</head>
+<body>
+  <!-- PAGE 1 -->
+  <main class="page">
+    <header>
+      <div>
+        <div class="title">Hendrix cheat sheet</div>
+        <div class="subtitle">
+          DIKU GPU cluster · Slurm quick reference
+        </div>
+      </div>
+      <div class="meta">
+        <div>Version: 2025-11-13</div>
+        <div>Always check wiki for updates</div>
+      </div>
+    </header>
+
+    <p class="lead">
+      This is a pragmatic cheat sheet for Hendrix. It isn't a full tutorial.
+      The authoritative docs live at
+      <a href="https://diku-dk.github.io/wiki/slurm-cluster">
+        diku-dk.github.io/wiki/slurm-cluster
+      </a>.
+      If something here disagrees with the wiki, the wiki wins.
+    </p>
+
+    <section class="columns">
+      <!-- LEFT COLUMN -->
+      <div>
+        <h1 class="section-header">Getting Started</h1>
+        <div class="box box--accent">
+          <h2>Getting access &amp; help</h2>
+
+          <h3>Access</h3>
+          <ul>
+            <li>Request role <code class="inline">SRV-hendrixgate-users</code> via identity.ku.dk.</li>
+            <li>Mail <code class="inline">cluster-access@di.ku.dk</code> with:
+              KU-ID and research section (students: write “student”).</li>
+          </ul>
+
+          <h3>External guests</h3>
+          <ul>
+            <li>KU employee creates “Science guest” via identity.ku.dk → <em>Manage Identity</em>.</li>
+            <li>Guest requests role <code class="inline">SRV-hendrixgate-users</code> and
+              KU employee mails <code class="inline">cluster-access@di.ku.dk</code>
+              with guest name + user-id.</li>
+          </ul>
+
+          <h3>Support</h3>
+          <ul>
+            <li>All cluster issues: <code class="inline">cluster-support@di.ku.dk</code>.</li>
+          </ul>
+        </div>
+
+        <div class="box">
+          <h2>Logging in</h2>
+
+          <h3>Prerequisites</h3>
+          <ul>
+            <li>On KU network (office cable or KU VPN / AnyConnect).</li>
+          </ul>
+
+          <h3>SSH config</h3>
+          <p>Put in <code class="inline">~/.ssh/config</code> (or
+            <code class="inline">C:\Users\you\.ssh\config</code> on Windows):</p>
+          <pre>
+Host hendrix
+    HostName hendrixgate
+    User &lt;kuid&gt;        # e.g. abc123
+    StrictHostKeyChecking no
+    CheckHostIP no
+    UserKnownHostsFile /dev/null
+          </pre>
+          <p>Connect:</p>
+          <pre>ssh hendrix</pre>
+          <p class="note">
+            You start on a gateway node. Do only light work here
+            (editing, compiling). Heavy experiments must use Slurm.
+          </p>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div>
+        <h1 class="section-header">Cluster Resources</h1>
+        <div class="box box--accent">
+          <h2>Cluster limits &amp; GPUs</h2>
+
+          <h3>Global limits</h3>
+          <ul>
+            <li>Max <strong>8 GPUs</strong> per user (total across jobs).</li>
+            <li>Default time limit (if not set): <strong>5 hours</strong>.</li>
+            <li>Maximum walltime per job: <strong>48 hours</strong>.</li>
+          </ul>
+
+          <h3>GPU resources (main <code class="inline">gpu</code> partition)</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Model</th>
+                <th>Count</th>
+                <th>Mem (GB)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>H100</td>
+                <td>Nvidia H100</td>
+                <td>4</td>
+                <td>80</td>
+              </tr>
+              <tr>
+                <td>A100</td>
+                <td>Nvidia A100 (40 &amp; 80 GB)</td>
+                <td>26</td>
+                <td>40 / 80</td>
+              </tr>
+              <tr>
+                <td>A40</td>
+                <td>Nvidia A40</td>
+                <td>14</td>
+                <td>40</td>
+              </tr>
+              <tr>
+                <td>titanrtx</td>
+                <td>Titan RTX / Quadro RTX 6000</td>
+                <td>55</td>
+                <td>–</td>
+              </tr>
+              <tr>
+                <td>titanx</td>
+                <td>Titan X / Xp / V</td>
+                <td>15</td>
+                <td>–</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="note">General GPU partition name:
+            <code class="inline">gpu</code>.</p>
+        </div>
+
+        <div class="box">
+          <h2>Most useful sbatch / srun options</h2>
+          <ul>
+            <li><code class="inline">-p, --partition=&lt;name&gt;</code> –
+              queue (usually <code class="inline">gpu</code>).</li>
+            <li><code class="inline">--job-name=&lt;name&gt;</code> – job label.</li>
+            <li><code class="inline">--time=HH:MM:SS</code> or
+              <code class="inline">D-HH:MM:SS</code> – walltime (≤ 48h).</li>
+            <li><code class="inline">--ntasks=&lt;n&gt;</code> – number of tasks
+              (MPI processes or workers).</li>
+            <li><code class="inline">--cpus-per-task=&lt;n&gt;</code> –
+              CPU cores per task (dataloaders / OpenMP).</li>
+            <li><code class="inline">--mem=&lt;MB|GB&gt;</code> –
+              RAM per node, e.g. <code class="inline">--mem=32G</code>.</li>
+            <li><code class="inline">--gres=gpu:&lt;type&gt;:&lt;n&gt;</code> –
+              GPUs, e.g. <code class="inline">--gres=gpu:A100:1</code> or
+              <code class="inline">--gres=gpu:2</code>.</li>
+            <li><code class="inline">--array=0-9</code> – job array indices.</li>
+          </ul>
+        </div>
+
+        <div class="box">
+          <h2>Partitions</h2>
+          <ul>
+            <li><code class="inline">gpu</code> – main GPU partition (default).</li>
+            <li><code class="inline">cpu</code> – CPU-only partition (if available).</li>
+            <li>Check available partitions: <code class="inline">sinfo</code> or
+              <code class="inline">scontrol show partition</code>.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- PAGE 2 -->
+  <main class="page">
+    <section class="columns">
+      <!-- LEFT COLUMN -->
+      <div>
+        <h1 class="section-header">Working with Files</h1>
+        <div class="box">
+          <h2>Files &amp; data</h2>
+
+          <h3>Copy files</h3>
+          <pre>
+# to Hendrix
+scp -r my_file1 my_folder/ hendrix:~/some_dir
+
+# from Hendrix
+scp -r hendrix:~/some_dir local_dir/
+          </pre>
+
+          <h3>Mount home with sshfs (Linux/macOS)</h3>
+          <pre>sshfs xyz123@hendrix:/home/xyz123 /mnt/hendrix</pre>
+
+          <h3>Windows (SSHFS-Win)</h3>
+          <p>Use "Map network drive" with:</p>
+          <pre>\\sshfs\xyz123@hendrixgate.unicph.domain</pre>
+
+          <h3>ERDA</h3>
+          <ul>
+            <li>Create account at <strong>erda.dk</strong> and set up SFTP SSH key.</li>
+            <li>Use <code class="inline">sshfs</code> in small
+              <code class="inline">mount_erda.sh</code> /
+              <code class="inline">unmount_erda.sh</code> scripts
+              and call them at start/end of your Slurm job.</li>
+          </ul>
+
+          <h3>Containers (SIF)</h3>
+          <p>For Singularity/Apptainer images see:
+            <code class="inline">slurm-sif</code> page on the Hendrix wiki.</p>
+        </div>
+
+        <div class="box">
+          <h2>Modules (software)</h2>
+          <p>Use environment modules to load compilers, Python, CUDA, etc.</p>
+          <pre>
+module avail                 # list modules
+module load python/3.9.9     # example
+python3 --version
+          </pre>
+          <p>To always load a module, append to
+            <code class="inline">~/.bashrc</code>:</p>
+          <pre>echo "module load python/3.9.9" &gt;&gt; ~/.bashrc</pre>
+        </div>
+
+        <div class="box">
+          <h2>File transfer tips</h2>
+          <ul>
+            <li>Use <code class="inline">rsync</code> for large transfers:
+              <code class="inline">rsync -avz file.txt hendrix:~/</code></li>
+            <li>Compress before transfer: <code class="inline">tar czf data.tar.gz data/</code></li>
+            <li>Check disk quota: <code class="inline">quota -s</code></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div>
+        <h1 class="section-header">Job Examples</h1>
+        <div class="box">
+          <h2>CPU-only job example</h2>
+          <pre>
+#!/bin/bash
+#SBATCH -p gpu
+#SBATCH --job-name=my_cpu_job
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --time=02:00:00
+#SBATCH --mem=8G
+
+echo "Running on $(hostname)"
+./my_program arg1 arg2
+./post_process.sh
+          </pre>
+          <p class="note">
+            Use CPU-only for preprocessing / analysis. GPU is not required here.
+          </p>
+        </div>
+
+        <div class="box">
+          <h2>GPU job example</h2>
+          <pre>
+#!/bin/bash
+#SBATCH -p gpu
+#SBATCH --job-name=my_gpu_job
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=32G
+#SBATCH --gres=gpu:A100:1
+#SBATCH --time=12:00:00
+
+module load python/3.9.9
+module load cuda/...
+
+echo "Node: $(hostname)"
+echo "GPUs: $CUDA_VISIBLE_DEVICES"
+
+python train.py --config config.yaml
+          </pre>
+          <p class="note">
+            For two Titan X GPUs, use
+            <code class="inline">--gres=gpu:titanx:2</code>.
+          </p>
+        </div>
+
+        <div class="box">
+          <h2>Job arrays (parameter sweeps)</h2>
+          <pre>
+#!/bin/bash
+#SBATCH --job-name=my_array
+#SBATCH -p gpu
+#SBATCH --array=0-9%3
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=8G
+#SBATCH --time=24:00:00
+
+python experiment.py ${SLURM_ARRAY_TASK_ID}
+          </pre>
+          <p class="note">
+            10 tasks total (0–9), at most 3 running in parallel. Use the array
+            index to pick seeds or configs.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- PAGE 3 -->
+  <main class="page">
+    <section class="columns">
+      <!-- LEFT COLUMN -->
+      <div>
+        <h1 class="section-header">Slurm Basics</h1>
+        <div class="box">
+          <h2>Core Slurm commands</h2>
+          <pre>
+squeue                    # all jobs
+squeue -u $USER           # your jobs
+
+sbatch script.sh          # submit batch job
+srun --pty bash           # interactive shell on compute node
+
+scancel &lt;jobid&gt;           # cancel job
+scancel -u $USER          # cancel ALL your jobs
+
+sacct -j &lt;jobid&gt; \
+  -o JobName,State,Elapsed,MaxRss,AllocCPUs
+
+sinfo                     # partition / node status (if enabled)
+          </pre>
+        </div>
+
+        <div class="box">
+          <h2>Monitoring jobs</h2>
+          <pre>
+# Detailed job info
+scontrol show job &lt;jobid&gt;
+
+# Job statistics
+sacct -j &lt;jobid&gt; --format=JobID,JobName,State,Elapsed,MaxRss,AllocCPUs,ReqMem
+
+# All your recent jobs
+sacct -u $USER --starttime=today
+
+# Job efficiency
+seff &lt;jobid&gt;              # if available
+          </pre>
+        </div>
+
+        <div class="box">
+          <h2>Useful commands</h2>
+          <ul>
+            <li>Check node info: <code class="inline">scontrol show node &lt;nodename&gt;</code></li>
+            <li>Job dependencies: <code class="inline">--dependency=afterok:&lt;jobid&gt;</code></li>
+            <li>Email notifications: <code class="inline">--mail-type=END,FAIL</code></li>
+            <li>Working directory: <code class="inline">--workdir=/path/to/dir</code></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div>
+        <h1 class="section-header">Best Practices</h1>
+        <div class="box">
+          <h2>Memory &amp; utilisation</h2>
+
+          <h3>Estimate memory</h3>
+          <p>Inside a short test job:</p>
+          <pre>/usr/bin/time -v python train.py</pre>
+          <p>Check <em>Maximum resident set size</em> and then request slightly
+            more via <code class="inline">--mem</code>.</p>
+
+          <h3>After job finishes</h3>
+          <pre>
+sacct -j &lt;jobid&gt; \
+  -o JobName,MaxRss,State,AllocCPUs
+          </pre>
+        </div>
+
+        <div class="box">
+          <h2>Jobs the scheduler likes</h2>
+          <ul>
+            <li>Use <strong>job arrays</strong> for many similar experiments.</li>
+            <li>Prefer <strong>shorter jobs</strong> (≤ 12–24 h) where possible.</li>
+            <li>Request only the <strong>resources you need</strong>
+              (GPUs, CPUs, memory, time).</li>
+            <li>Cancel broken or stuck jobs quickly:
+              <code class="inline">scancel &lt;jobid&gt;</code>.</li>
+            <li>Do not run heavy jobs on gateway nodes – always go via Slurm.</li>
+          </ul>
+        </div>
+
+        <div class="box">
+          <h2>Quick troubleshooting</h2>
+          <ul>
+            <li><strong>"Connection closed by …"</strong> –
+              your access role might have expired; mail
+              <code class="inline">cluster-support@di.ku.dk</code>
+              with the exact error message.</li>
+            <li><strong>Job stuck in queue with (Resources)</strong> –
+              waiting for GPUs/CPUs/RAM or higher-priority jobs to finish.</li>
+            <li><strong>Node in drain</strong> –
+              usually means jobs will finish then admins reboot or investigate
+              the node.</li>
+          </ul>
+        </div>
+
+        <div class="box">
+          <h2>Performance tips</h2>
+          <ul>
+            <li>Use <code class="inline">--exclusive</code> for full node access (if needed).</li>
+            <li>Set <code class="inline">OMP_NUM_THREADS</code> to match <code class="inline">--cpus-per-task</code>.</li>
+            <li>Pin GPUs: <code class="inline">CUDA_VISIBLE_DEVICES=0</code> for single GPU.</li>
+            <li>Profile with <code class="inline">nvprof</code> or <code class="inline">nsys</code>.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <p class="footer-note">
+      Tip: when printing from your browser, enable
+      <em>"Background graphics"</em> for nicer boxes and headings.
+      Remember that Hendrix is a shared resource – good citizenship
+      (reasonable resource requests, cancelling broken jobs) helps everyone.
+    </p>
+  </main>
+</body>
+</html>
